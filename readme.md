@@ -54,3 +54,7 @@ Data IO             | ○     | ○     | ○           | ○     |        |
 Data Reduce         |       |       | ○           | ○     |        | Input
 BD Preprocessing    | ○     | ○     | ○           | ○     |        | L_STD_D
 Bifucation Diagram  |       |       |             |       | ○      | (Image)
+
+
+## Data Type Introduction
+
