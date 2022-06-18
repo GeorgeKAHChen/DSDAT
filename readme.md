@@ -41,20 +41,71 @@ This project combined some basic tools of stochastic dynamic system analysis, in
 #### Bifucation diagram
 
 
-Input Data Type     | 1-d M | n-d M | 1/2/3/4-d C | n-d C | Others | Output Data Type
----                 | ---   | ---   | ---         | ---   | ---    | ---
-Data Generation     | ○     | ○     | ○           | ○     |        | STD_D
-Stochastic System   | ○     | ○     | ○           | ○     |        | STD_D
-Generation with LE  | ○     | ○     | ○           | ○     |        | STD_D_LE
-LE/LS               | ○     | ○     | ○           | ○     |        | LE_D
-System Image        |       |       | ○           |       |        | (Image)
-Crobweb Image       | ○     |       |             |       |        | (Image)
-Poincare Section    |       |       | ○           |       |        | STD_D(1-d M)
-Data IO             | ○     | ○     | ○           | ○     |        | 
-Data Reduce         |       |       | ○           | ○     |        | Input
-BD Preprocessing    | ○     | ○     | ○           | ○     |        | L_STD_D
-Bifucation Diagram  |       |       |             |       | ○      | (Image)
+Input Data Type     | 1-d M | n-d M | 1/2/3/4-d C | n-d C | Others | Output Data Type| memo 
+---                 | ---   | ---   | ---         | ---   | ---    | --- | ---
+Data Generation     | ○     | ○     | ○           | ○     |        | STD_D| SP
+Stochastic System   | ○     | ○     | ○           | ○     |        | STD_D| SP
+Generation with LE  | ○     | ○     | ○           | ○     |        | STD_D_LE| SP
+Para - LE/LS        | ○     | ○     | ○           | ○     |        | LE_D| GPU/MP
+System Image        |       |       | ○           |       |        | (Image)| SP
+Crobweb Image       | ○     |       |             |       |        | (Image)| SP
+Poincare Section    |       |       | ○           |       |        | STD_D(1-d M)| SP
+BD Generation       | ○     | ○     | ○           | ○     |        | L_STD_D| GPU/MP
+Bifucation Diagram  |       |       |             |       | ○      | (Image)| SP
+Data IO             | ○     | ○     | ○           | ○     |        | | SP
+Data Reduce         |       |       | ○           | ○     |        | Input| SP
+
+* M: Map
+
+* C: Continuous system
+
+* SP: single processing
+
+* GPU/MP: using gpu or multiprocessing to calculation
 
 
 ## Data Type Introduction
 
+#### Standard Data Information json File
+``` json
+{
+    "data_type": "",                //STD_D, STD_D_LE, LE_D, L_STD_D
+    "system_type": "",              //MD, MS, CD, CS
+    "system_name": "",
+    "para_info":{
+        "t_mark": "",               // Time parameters
+        "t_max": "",
+        "delta_t": "",
+        "print_delta_t": "",
+
+        "dim": 0,                   // System dimension
+        "para": 0,
+        "rand": 0,
+        "rand_para": 0,
+
+        "system_para_min": [0.0, ],      // Parameters
+        "system_para_max": [0.0, ],
+        "system_group": [0, ],
+    },
+    "axis_name":[],                 // Axis name for image plot
+    "operation": "",
+    "memo": ""
+}
+```
+
+
+#### STD_D/STD_D_LE
+```
+[t, Data, (LE)]
+```
+
+#### LE_D
+``` 
+[parameter, LE]
+```
+
+
+#### L_STD_D
+``` 
+[parameter, Data]           //time t order
+```
