@@ -69,32 +69,36 @@ Data Reduce         |       |       | ○           | ○     |        | Input| 
 #### Standard Data Information json File
 ``` json
 {
-    "data_type": "",                //STD_D, STD_D_LE, LE_D, L_STD_D
-    "system_type": "",              //MD, MS, CD, CS
+    "data_type": "",                        //STD_D, STD_D_LE, LE_D, L_STD_D
+    "system_type": "",                      //MD, MS, CD, CS
+    "data_file_name": "",
     "system_name": "",
-    "para_info":{
-        "t_mark": "",               // Time parameters
-        "t_max": "",
-        "delta_t": "",
-        "print_delta_t": "",
 
-        "dim": 0,                   // System dimension
-        "para": 0,
-        "rand": 0,
-        "rand_para": 0,
+    "t_mark": "",                           // Time parameters
+    "t_save": "",
+    "t_max": "",
+    "delta_t": "",
+    "print_delta_t": "",
 
-        "system_para_min": [0.0, ],      // Parameters
-        "system_para_max": [0.0, ],
-        "system_group": [0, ],
-    },
-    "axis_name":[],                 // Axis name for image plot
-    "operation": "",
+    "dim": 0,                           // System dimension
+    "para": 0,
+    "rand": 0,
+    "rand_para": 0,
+    
+    "para_change_loc": 0,
+    "system_para": [0.0, ],             //Single group data     
+    "system_para_min": [0.0, ],         // Parameters
+    "system_para_max": [0.0, ],
+    "system_group": [0, ],
+
+    "axis_name":[],                         // Axis name for image plot
+    "LE": "",
     "memo": ""
 }
 ```
 
 
-#### STD_D/STD_D_LE
+#### STD_D/STD_D_LE/STD_D_LEE
 ```
 [t, Data, (LE)]
 ```
