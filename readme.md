@@ -43,9 +43,9 @@ This project combined some basic tools of stochastic dynamic system analysis, in
 
 Input Data Type     | 1-d M | n-d M | 1/2/3/4-d C | n-d C | Others | Output Data Type| memo 
 ---                 | ---   | ---   | ---         | ---   | ---    | --- | ---
-Data Generation     | ○     | ○     | ○           | ○     |        | STD_D| SP
-Stochastic System   | ○     | ○     | ○           | ○     |        | STD_D| SP
-Generation with LE  | ○     | ○     | ○           | ○     |        | STD_D_LE| SP
+Data Generation     | ○     | ○     | ○           | ○     |        | STD_D| GPU/MP
+Stochastic System   | ○     | ○     | ○           | ○     |        | STD_D| GPU/MP
+Generation with LE  | ○     | ○     | ○           | ○     |        | STD_D_LE| GPU/MP
 Para - LE/LS        | ○     | ○     | ○           | ○     |        | LE_D| GPU/MP
 System Image        |       |       | ○           |       |        | (Image)| SP
 Crobweb Image       | ○     |       |             |       |        | (Image)| SP

@@ -1,8 +1,6 @@
 """=========================================
     
-    Lorenz.c
-
-    Lorenz model (3-d)   
+    Lorenz.py
 
 ========================================="""
 
@@ -13,13 +11,13 @@ dim = 3;
 para = 3
 rand = 0
 rand_para = 0
-para_change_loc = -1
+para_change_loc = 4
 
 system_para = []
 #                   x0   y0   z0   sigma   rho       beta
-system_para_min = [0.1, 0.1, 0.1,  10.0,  28.0,   8.0/3.0]
+system_para_min = [0.1, 0.1, 0.1,  10.0,  1.0,   8.0/3.0]
 system_para_max = [0.1, 0.1, 0.1,  10.0,  28.0,   8.0/3.0]
-system_group    = [  1,   1,   1,     1,     1,         1]
+system_group    = [  1,   1,   1,     1,    100,         1]
 
 axis_name = ["x", "y", "z", "sigma", "rho", "beta"]
 
@@ -40,14 +38,15 @@ def f(state, t, para):
 
 
 def rand_f(state, t, random_value, rand_para, delta_t):
+    import math
     x = state[0]
     y = state[1]
     z = state[2]
 
     result = [0, 0, 0]
-    result[0] = result[0]
-    result[1] = result[1]
-    result[2] = result[2]
+    result[0] = x #+ math.sqrt(delta_t) * rand_para[0] * random_value[0]
+    result[1] = y
+    result[2] = z
     return result
 
 

@@ -1,10 +1,8 @@
-#==================================================
-#
-#       Fast Lyapunov Spectrum
-#
-#       Initialization.py
-#
-#==================================================
+"""=========================================
+    
+    initialization.py
+
+========================================="""
 
 STD_JSON = {
     "data_type": "",
@@ -37,7 +35,7 @@ STD_JSON = {
 class main_parameters():
     def __init__(self):
         #super(init, self).__init__()
-        keys = ["dyn", "default_data_folder", "default_LE_folder", "default_BD_folder", "save_image_local", "use_GPU_computation"]
+        self.keys = ["dyn", "default_data_folder", "default_LE_folder", "default_BD_folder", "image_data_file", "save_image_local", "use_GPU_computation", "device"]
         for kase in self.keys:
             setattr(self, kase, 0)        
 
@@ -90,9 +88,9 @@ class system_parameter():
         return
 
     def read_from_model(self, 
-                        data_type, 
-                        data_file_name,
-                        dyn):
+                        data_type = "STD", 
+                        data_file_name = "",
+                        dyn = 0):
         self.data_type = data_type
         self.data_file_name = data_file_name
         
@@ -140,6 +138,80 @@ class system_parameter():
 
         return
 
+    def gen_data_group(self):
+        from copy import deepcopy
+        import numpy as np
+        from torch import DoubleTensor
+
+        data_group = []
+
+        initial_val = [0 for n in range(self.dim)]
+        dyn_para = [0 for n in range(self.para)]
+        dyn_rand_para = [0 for n in range(self.rand_para)]
+        
+        for kase in range(self.dim):
+            initial_val[kase] = self.system_para_min[kase]
+        for kase in range(self.para):
+            dyn_para[kase] = self.system_para_min[kase + self.dim]
+        for kase in range(self.rand_para):
+            dyn_rand_para[kase] = self.system_para_min[kase + self.dim + self.para]
+
+        data_group = deepcopy([[initial_val], [dyn_para], [dyn_rand_para]])
+
+        if self.para_change_loc < 0:
+            pass
+        elif self.para_change_loc > self.dim + self.para + self.rand_para:
+            pass
+        else:
+            if self.system_group[self.para_change_loc] == 1:
+                pass
+            else:
+                delta_para = (self.system_para_max[self.para_change_loc] - self.system_para_min[self.para_change_loc]) / (self.system_group[self.para_change_loc] - 1)
+
+                if self.para_change_loc - self.dim < 0:
+                    tmp_loc = self.para_change_loc
+                    while 1:
+                        initial_val[tmp_loc] += delta_para
+                        if initial_val[tmp_loc] > self.system_para_max[self.para_change_loc]:
+                            break
+                        data_group[0].append(deepcopy(initial_val))
+                        data_group[1].append(deepcopy(dyn_para))
+                        data_group[2].append(deepcopy(dyn_rand_para))
+                    initial_val[tmp_loc] = self.system_para_max[self.para_change_loc]
+
+                elif self.para_change_loc - self.dim - self.para < 0:
+                    tmp_loc = self.para_change_loc - self.dim
+                    while 1:
+                        dyn_para[tmp_loc] += delta_para
+                        if dyn_para[tmp_loc] > self.system_para_max[self.para_change_loc]:
+                            break
+                        data_group[0].append(deepcopy(initial_val))
+                        data_group[1].append(deepcopy(dyn_para))
+                        data_group[2].append(deepcopy(dyn_rand_para))
+                    dyn_para[tmp_loc] = self.system_para_max[self.para_change_loc]
+                    
+                elif para_change_loc - self.dim - self.para - self.rand_para < 0:
+                    tmp_loc = para_change_loc - self.dim - self.para
+                    while 1:
+                        dyn_rand_para[tmp_loc] += delta_para
+                        if dyn_rand_para[tmp_loc] > self.system_para_max[self.para_change_loc]:
+                            break
+                        data_group[0].append(deepcopy(initial_val))
+                        data_group[1].append(deepcopy(dyn_para))
+                        data_group[2].append(deepcopy(dyn_rand_para))
+                    dyn_rand_para[tmp_loc] = self.system_para_max[self.para_change_loc]
+                data_group[0].append(deepcopy(initial_val))
+                data_group[1].append(deepcopy(dyn_para))
+                data_group[2].append(deepcopy(dyn_rand_para))
+        data_group = [np.array(data_group[0]), np.array(data_group[1]),  np.array(data_group[2])]
+        new_data_group = [[], [], []]
+        for kase in range(0, self.dim):
+            new_data_group[0].append(DoubleTensor(data_group[0][:, kase]))
+        for kase in range(0, self.para):
+            new_data_group[1].append(DoubleTensor(data_group[1][:, kase]))
+        for kase in range(0, self.rand_para):
+            new_data_group[2].append(DoubleTensor(data_group[2][:, kase]))
+        return new_data_group
 
 
 if __name__ == '__main__':
@@ -147,4 +219,5 @@ if __name__ == '__main__':
     SYSTRM_PARAMETER.read_from_model(data_type = "STD_D",
                                      data_file_name = "Lorenz1",
                                      dyn = "model.Lorenz")
-    SYSTRM_PARAMETER.save_as_json(json_file_name = "new.json")
+    #SYSTRM_PARAMETER.save_as_json(json_file_name = "new.json")
+    print(SYSTRM_PARAMETER.gen_data_group())
