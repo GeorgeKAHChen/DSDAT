@@ -13,6 +13,8 @@ import initialization
 import data_generation
 
 torch.set_num_threads(8)
+torch.set_num_interop_threads(8)
+torch.distributed.is_available()
 register_operation = ["00", "01", "02", "12", "2", "51", "9"]
 
 def main():
@@ -41,8 +43,8 @@ def main():
                 continue
     else:
         for i in range(0, len(register_operation)):
-            if val == register_operation[i]:
-                operation.append(val)
+            if sys.argv[1] == register_operation[i]:
+                operation.append(sys.argv[1])
                 break
         if len(operation) >= 1:
             pass
@@ -72,8 +74,8 @@ def main():
                     continue
         else:
             for i in range(0, len(sub_register)):
-                if val == sub_register[i]:
-                    operation.append(val)
+                if sys.argv[2] == sub_register[i]:
+                    operation.append(sys.argv[2])
                     break
             if len(operation) == 2:
                 pass

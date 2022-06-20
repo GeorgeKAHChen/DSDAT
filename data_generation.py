@@ -93,7 +93,7 @@ class net_generation(nn.Module):
 
 
 def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
-    curr_x, dyn_para, rand_dyn_para = MAIN_DYNAMIC.gen_data_group()
+    curr_x, dyn_para, rand_dyn_para = MAIN_DYNAMIC.gen_data_group(MAIN_PARAMETER)
     curr_t = 0
     model = net_generation(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
     LE = []

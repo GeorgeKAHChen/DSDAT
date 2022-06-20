@@ -138,7 +138,7 @@ class system_parameter():
 
         return
 
-    def gen_data_group(self):
+    def gen_data_group(self, MAIN_PARAMETER):
         from copy import deepcopy
         import numpy as np
         from torch import DoubleTensor
@@ -206,11 +206,11 @@ class system_parameter():
         data_group = [np.array(data_group[0]), np.array(data_group[1]),  np.array(data_group[2])]
         new_data_group = [[], [], []]
         for kase in range(0, self.dim):
-            new_data_group[0].append(DoubleTensor(data_group[0][:, kase]))
+            new_data_group[0].append(DoubleTensor(data_group[0][:, kase]).to(MAIN_PARAMETER.device))
         for kase in range(0, self.para):
-            new_data_group[1].append(DoubleTensor(data_group[1][:, kase]))
+            new_data_group[1].append(DoubleTensor(data_group[1][:, kase]).to(MAIN_PARAMETER.device))
         for kase in range(0, self.rand_para):
-            new_data_group[2].append(DoubleTensor(data_group[2][:, kase]))
+            new_data_group[2].append(DoubleTensor(data_group[2][:, kase]).to(MAIN_PARAMETER.device))
         return new_data_group
 
 
