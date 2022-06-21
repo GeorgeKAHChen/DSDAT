@@ -17,7 +17,7 @@ system_para = []
 #                   x0   y0   z0   sigma   rho       beta
 system_para_min = [0.1, 0.1, 0.1,  10.0,  1.0,   8.0/3.0]
 system_para_max = [0.1, 0.1, 0.1,  10.0,  28.0,   8.0/3.0]
-system_group    = [  1,   1,   1,     1,    100,         1]
+system_group    = [  1,   1,   1,     1,   10,         1]
 
 axis_name = ["x", "y", "z", "sigma", "rho", "beta"]
 
@@ -28,10 +28,10 @@ def f(state, t, para):
     y = state[1]
     z = state[2]
 
-    result = [0, 0, 0]
-    result[0] = para[0] * (y - x)
-    result[1] = x * (para[1] - z) - y
-    result[2] = x * y - para[2] * z
+    result = []
+    result.append(para[0] * (y - x))
+    result.append(x * (para[1] - z) - y)
+    result.append(x * y - para[2] * z)
 
     return result
 
@@ -43,10 +43,10 @@ def rand_f(state, t, random_value, rand_para, delta_t):
     y = state[1]
     z = state[2]
 
-    result = [0, 0, 0]
-    result[0] = x #+ math.sqrt(delta_t) * rand_para[0] * random_value[0]
-    result[1] = y
-    result[2] = z
+    result = []
+    result.append(x) #+ math.sqrt(delta_t) * rand_para[0] * random_value[0]
+    result.append(y)
+    result.append(z)
     return result
 
 
@@ -56,18 +56,18 @@ def Jf(state, delta_t, para):
     y = state[1]
     z = state[2]
 
-    result = [0 for n in range(9)]
-    result[0] = 1.0 - delta_t * para[0]
-    result[1] = delta_t * para[0]
-    result[2] = 0.0
+    result = []
+    result[0].append(1.0 - delta_t * para[0])
+    result[1].append(delta_t * para[0])
+    result[2].append(0.0)
 
-    result[3] = delta_t * (para[1] - z)
-    result[4] = 1.0 - delta_t
-    result[5] = -delta_t * x
+    result[3].append(delta_t * (para[1] - z))
+    result[4].append(1.0 - delta_t)
+    result[5].append(-delta_t * x)
 
-    result[6] = delta_t * y
-    result[7] = delta_t * x
-    result[8] = 1.0 - delta_t * para[2]
+    result[6].append(delta_t * y)
+    result[7].append(delta_t * x)
+    result[8].append(1.0 - delta_t * para[2])
 
     return result
 

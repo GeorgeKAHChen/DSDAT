@@ -13,14 +13,9 @@ class euler(nn.Module):
         self.f = f
         self.device = device
         
-    def forward(self, inputs):
-        curr_t = inputs[0]
-        curr_x = inputs[1]
-        para = inputs[2]
-        
-        tmp_x = self.delta_t * self.f(curr_x, curr_t, para)
-        
-        return curr_x + tmp_x
+    def forward(self, MAIN_DYNAMIC):
+        MAIN_DYNAMIC.curr_x = MAIN_DYNAMIC.curr_x + self.delta_t * self.f(MAIN_DYNAMIC.curr_x, MAIN_DYNAMIC.curr_t, MAIN_DYNAMIC.dyn_para)
+        return 
 
 
     def extra_repr(self):

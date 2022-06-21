@@ -5,17 +5,17 @@
 ========================================="""
 
 
-def std_data_io_init():
+def std_data_io_init(MAIN_PARAMETER):
     return 
 
 
     
-def std_data_io_main():
+def std_data_io_main(MAIN_PARAMETER):
     return 
 
 
     
-def std_data_io_after():
+def std_data_io_after(MAIN_PARAMETER):
     return 
 
 

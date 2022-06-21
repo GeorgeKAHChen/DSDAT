@@ -13,12 +13,9 @@ class maruyama(nn.Module):
         self.device = device
         super(maruyama, self).__init__()
 
-    def forward(self, inputs):
-        curr_t = inputs[0]
-        curr_x = inputs[1]
-        rand_para = inputs[3]
-        random_value = inputs[4]
-        return self.rand_f(curr_x, curr_t, random_value, rand_para, self.delta_t)
+    def forward(self, MAIN_DYNAMIC):
+        MAIN_DYNAMIC.curr_x = self.rand_f(MAIN_DYNAMIC.curr_x, MAIN_DYNAMIC.curr_t, MAIN_DYNAMIC.random_value, MAIN_DYNAMIC.rand_dyn_para, self.delta_t)
+        return 
 
     def extra_repr(self):
         #Output the io size for visible

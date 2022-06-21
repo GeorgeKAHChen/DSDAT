@@ -32,6 +32,9 @@ STD_JSON = {
 }
 
 
+
+
+
 class main_parameters():
     def __init__(self):
         #super(init, self).__init__()
@@ -45,6 +48,8 @@ class main_parameters():
         json_file = read_json(os.path.join(os.getcwd(), "default.json"))
         for kase in self.keys:
             setattr(self, kase, json_file[kase])   
+
+
 
 
 
@@ -72,6 +77,12 @@ class system_parameter():
         self.rand_f = 0
         self.Jf = 0
 
+        self.calc_keys = ["curr_t", "curr_x", "dyn_para", "rand_dyn_para", "eyes", "random_value"]
+        for kase in self.calc_keys:
+            setattr(self, kase, 0)
+
+
+
     def read_from_json(self, filename):
         from libpy.Init import read_json
         import os
@@ -86,6 +97,8 @@ class system_parameter():
             setattr(self, kase, json_file[kase])
         
         return
+
+
 
     def read_from_model(self, 
                         data_type = "STD", 
@@ -104,16 +117,13 @@ class system_parameter():
         dyn = importlib.import_module(dyn)
         for kase in self.system_keys:
             setattr(self, kase, getattr(dyn, kase))
+        
         self.f = dyn.f
         self.rand_f = dyn.rand_f
         self.Jf = dyn.Jf
         
         return
 
-    def write_results(self, LE):
-        self.LE = LE
-        
-        return
 
 
     def save_as_json(self, json_file_name):
@@ -137,6 +147,8 @@ class system_parameter():
         File.close()
 
         return
+
+
 
     def gen_data_group(self, MAIN_PARAMETER):
         from copy import deepcopy
@@ -204,14 +216,38 @@ class system_parameter():
                 data_group[1].append(deepcopy(dyn_para))
                 data_group[2].append(deepcopy(dyn_rand_para))
         data_group = [np.array(data_group[0]), np.array(data_group[1]),  np.array(data_group[2])]
-        new_data_group = [[], [], []]
+        
+        self.curr_x = []
+        self.dyn_para = []
+        self.rand_dyn_para = []
         for kase in range(0, self.dim):
-            new_data_group[0].append(DoubleTensor(data_group[0][:, kase]).to(MAIN_PARAMETER.device))
+            self.curr_x.append(DoubleTensor(data_group[0][:, kase]).to(MAIN_PARAMETER.device))
         for kase in range(0, self.para):
-            new_data_group[1].append(DoubleTensor(data_group[1][:, kase]).to(MAIN_PARAMETER.device))
+            self.dyn_para.append(DoubleTensor(data_group[1][:, kase]).to(MAIN_PARAMETER.device))
         for kase in range(0, self.rand_para):
-            new_data_group[2].append(DoubleTensor(data_group[2][:, kase]).to(MAIN_PARAMETER.device))
-        return new_data_group
+            self.rand_dyn_para.append(DoubleTensor(data_group[2][:, kase]).to(MAIN_PARAMETER.device))
+        return 
+
+
+    def LE_initialization(self, MAIN_PARAMETER):
+        from torch import DoubleTensor
+        self.eyes = []
+        self.LE = []
+        arr = [0 for n in range(self.dim * self.dim)]
+        kase = 0
+        while 1:
+            arr[kase] = 1
+            kase += (self.dim + 1)
+            if kase > self.dim * self.dim:
+                break
+        
+        for i in range(0, len(arr)):
+            self.eyes.append(DoubleTensor([arr[i] for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
+            self.LE.append(DoubleTensor([0 for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
+        return 
+
+
+
 
 
 if __name__ == '__main__':

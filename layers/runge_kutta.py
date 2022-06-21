@@ -13,27 +13,23 @@ class runge_kutta(nn.Module):
         self.f = f
         self.device = device
         
-    def forward(self, inputs):
-        curr_t = inputs[0]
-        curr_x = inputs[1]
-        para = inputs[2]
-
-        k1 = self.f(curr_x, curr_t, para)
+    def forward(self, MAIN_DYNAMIC):
+        k1 = self.f(MAIN_DYNAMIC.curr_x, MAIN_DYNAMIC.curr_t, MAIN_DYNAMIC.dyn_para)
         k2 = []
-        for i in range(0, len(curr_x)):
-            k2.append(curr_x[i] + self.delta_t * 0.5 * k1[i]) 
-        k2 = self.f(k2, curr_t + self.delta_t * 0.5, para)
+        for i in range(0, len(MAIN_DYNAMIC.curr_x)):
+            k2.append(MAIN_DYNAMIC.curr_x[i] + self.delta_t * 0.5 * k1[i]) 
+        k2 = self.f(k2, MAIN_DYNAMIC.curr_t + self.delta_t * 0.5, MAIN_DYNAMIC.dyn_para)
         k3 = []
-        for i in range(0, len(curr_x)):
-            k3.append(curr_x[i] + self.delta_t * 0.5 * k2[i]) 
-        k3 = self.f(k3, curr_t + self.delta_t * 0.5, para)
+        for i in range(0, len(MAIN_DYNAMIC.curr_x)):
+            k3.append(MAIN_DYNAMIC.curr_x[i] + self.delta_t * 0.5 * k2[i]) 
+        k3 = self.f(k3, MAIN_DYNAMIC.curr_t + self.delta_t * 0.5, MAIN_DYNAMIC.dyn_para)
         k4 = []
-        for i in range(0, len(curr_x)):
-            k4.append(curr_x[i] + self.delta_t * k2[i]) 
-        k4 = self.f(k4, curr_t + self.delta_t, para)
-        for i in range(0, len(curr_x)):
-            curr_x[i] = curr_x[i] + self.delta_t * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * (1/6)
-        return curr_x
+        for i in range(0, len(MAIN_DYNAMIC.curr_x)):
+            k4.append(MAIN_DYNAMIC.curr_x[i] + self.delta_t * k2[i]) 
+        k4 = self.f(k4, MAIN_DYNAMIC.curr_t + self.delta_t, MAIN_DYNAMIC.dyn_para)
+        for i in range(0, len(MAIN_DYNAMIC.curr_x)):
+            MAIN_DYNAMIC.curr_x[i] = MAIN_DYNAMIC.curr_x[i] + self.delta_t * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * (1/6)
+        return 
 
     def extra_repr(self):
         #Output the io size for visible

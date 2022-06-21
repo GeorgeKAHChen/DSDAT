@@ -1,20 +1,20 @@
 #==================================================
 #
-#       layer/map_iteration.py
+#       layer/lya_expo.py
 #
 #==================================================
 import torch
 import torch.nn as nn
 
-class map_iteration(nn.Module):
-    def __init__(self, delta_t, f, device = "cuda"):
-        super(map_iteration, self).__init__()
+class lya_expo(nn.Module):
+    def __init__(self, delta_t, Jf, device = "cuda"):
+        super(lya_expo, self).__init__()
         self.delta_t = delta_t
-        self.f = f
+        self.Jf = Jf
         self.device = device
-        
+
     def forward(self, MAIN_DYNAMIC):
-        MAIN_DYNAMIC.curr_x = self.f(MAIN_DYNAMIC.curr_x, MAIN_DYNAMIC.curr_t, MAIN_DYNAMIC.dyn_para)
+        
         return 
 
     def extra_repr(self):
