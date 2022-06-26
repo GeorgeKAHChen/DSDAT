@@ -58,20 +58,20 @@ class net_generation(nn.Module):
 
     def forward(self, MAIN_DYNAMIC):
         if self.system_type == "MD":
-            self.map_iteration(MAIN_DYNAMIC)
+            MAIN_DYNAMIC.curr_x = self.map_iteration(MAIN_DYNAMIC)
 
         if self.system_type == "MS":
-            self.map_iteration(MAIN_DYNAMIC)
-            #self.noise_generation(MAIN_DYNAMIC)
-            self.maruyama(MAIN_DYNAMIC)
+            MAIN_DYNAMIC.curr_x = self.map_iteration(MAIN_DYNAMIC)
+            MAIN_DYNAMIC.random_value = self.noise_generation(MAIN_DYNAMIC)
+            MAIN_DYNAMIC.curr_x = self.maruyama(MAIN_DYNAMIC)
 
         if self.system_type == "CD":
-            self.runge_kutta(MAIN_DYNAMIC)
+            MAIN_DYNAMIC.curr_x = self.runge_kutta(MAIN_DYNAMIC)
 
         if self.system_type == "CS":
-            self.euler(MAIN_DYNAMIC)
-            #self.noise_generation(MAIN_DYNAMIC)
-            self.maruyama(MAIN_DYNAMIC)
+            MAIN_DYNAMIC.curr_x = self.euler(MAIN_DYNAMIC)
+            MAIN_DYNAMIC.random_value = self.noise_generation(MAIN_DYNAMIC)
+            MAIN_DYNAMIC.curr_x = self.maruyama(MAIN_DYNAMIC)
         """
         if LE:
             self.jacobian(MAIN_DYNAMIC).to(self.device)

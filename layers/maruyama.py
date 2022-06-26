@@ -14,8 +14,7 @@ class maruyama(nn.Module):
         super(maruyama, self).__init__()
 
     def forward(self, MAIN_DYNAMIC):
-        MAIN_DYNAMIC.curr_x = self.rand_f(MAIN_DYNAMIC.curr_x, MAIN_DYNAMIC.curr_t, MAIN_DYNAMIC.random_value, MAIN_DYNAMIC.rand_dyn_para, self.delta_t)
-        return 
+        return self.rand_f(MAIN_DYNAMIC.curr_x, MAIN_DYNAMIC.curr_t, MAIN_DYNAMIC.random_value, MAIN_DYNAMIC.rand_dyn_para, self.delta_t) 
 
     def extra_repr(self):
         #Output the io size for visible

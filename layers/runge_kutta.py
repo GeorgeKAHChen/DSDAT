@@ -27,9 +27,10 @@ class runge_kutta(nn.Module):
         for i in range(0, len(MAIN_DYNAMIC.curr_x)):
             k4.append(MAIN_DYNAMIC.curr_x[i] + self.delta_t * k2[i]) 
         k4 = self.f(k4, MAIN_DYNAMIC.curr_t + self.delta_t, MAIN_DYNAMIC.dyn_para)
+        curr_x = []
         for i in range(0, len(MAIN_DYNAMIC.curr_x)):
-            MAIN_DYNAMIC.curr_x[i] = MAIN_DYNAMIC.curr_x[i] + self.delta_t * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * (1/6)
-        return 
+            curr_x.append(MAIN_DYNAMIC.curr_x[i] + self.delta_t * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * (1/6))
+        return curr_x
 
     def extra_repr(self):
         #Output the io size for visible

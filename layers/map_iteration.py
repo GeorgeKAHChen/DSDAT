@@ -14,8 +14,7 @@ class map_iteration(nn.Module):
         self.device = device
         
     def forward(self, MAIN_DYNAMIC):
-        MAIN_DYNAMIC.curr_x = self.f(MAIN_DYNAMIC.curr_x, MAIN_DYNAMIC.curr_t, MAIN_DYNAMIC.dyn_para)
-        return 
+        return self.f(MAIN_DYNAMIC.curr_x, MAIN_DYNAMIC.curr_t, MAIN_DYNAMIC.dyn_para)
 
     def extra_repr(self):
         #Output the io size for visible
