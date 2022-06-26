@@ -3,8 +3,8 @@
 
     "delta_t": 1e-4, 
     "delta_t_save": -1,
-    "t_max":  10000, 
-    "t_mark": 9000, 
+    "t_max":  1000, 
+    "t_mark": 900, 
 
     "default_data_folder": "Local_Output",
     "default_LE_folder": "tmp_LE_output",

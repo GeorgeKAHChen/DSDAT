@@ -77,10 +77,6 @@ class system_parameter():
         self.rand_f = 0
         self.Jf = 0
 
-        self.calc_keys = ["curr_t", "curr_x", "dyn_para", "rand_dyn_para", "eyes", "random_value"]
-        for kase in self.calc_keys:
-            setattr(self, kase, 0)
-
 
 
     def read_from_json(self, filename):
@@ -217,22 +213,22 @@ class system_parameter():
                 data_group[2].append(deepcopy(dyn_rand_para))
         data_group = [np.array(data_group[0]), np.array(data_group[1]),  np.array(data_group[2])]
         
-        self.curr_x = []
-        self.dyn_para = []
-        self.rand_dyn_para = []
+        curr_x = []
+        dyn_para = []
+        rand_dyn_para = []
         for kase in range(0, self.dim):
-            self.curr_x.append(DoubleTensor(data_group[0][:, kase]).to(MAIN_PARAMETER.device))
+            curr_x.append(DoubleTensor(data_group[0][:, kase]).to(MAIN_PARAMETER.device))
         for kase in range(0, self.para):
-            self.dyn_para.append(DoubleTensor(data_group[1][:, kase]).to(MAIN_PARAMETER.device))
+            dyn_para.append(DoubleTensor(data_group[1][:, kase]).to(MAIN_PARAMETER.device))
         for kase in range(0, self.rand_para):
-            self.rand_dyn_para.append(DoubleTensor(data_group[2][:, kase]).to(MAIN_PARAMETER.device))
-        return 
+            rand_dyn_para.append(DoubleTensor(data_group[2][:, kase]).to(MAIN_PARAMETER.device))
+        return curr_x, dyn_para, rand_dyn_para
 
 
     def LE_initialization(self, MAIN_PARAMETER):
         from torch import DoubleTensor
-        self.eyes = []
-        self.LE = []
+        eyes = []
+        LE = []
         arr = [0 for n in range(self.dim * self.dim)]
         kase = 0
         while 1:
@@ -242,12 +238,19 @@ class system_parameter():
                 break
         
         for i in range(0, len(arr)):
-            self.eyes.append(DoubleTensor([arr[i] for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
-            self.LE.append(DoubleTensor([0 for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
-        return 
+            eyes.append(DoubleTensor([arr[i] for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
+            LE.append(DoubleTensor([0 for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
+        return eyes, LE
 
 
 
+    def group_gen(self, MAIN_PARAMETER):
+        std_input = [0 for n in range(7)]
+
+        std_input[1], std_input[2], std_input[3] = self.gen_data_group(MAIN_PARAMETER)
+        std_input[4], std_input[5] = self.LE_initialization(MAIN_PARAMETER)
+
+        return std_input
 
 
 if __name__ == '__main__':

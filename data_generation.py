@@ -11,8 +11,8 @@ inputs[1]: tensor: curr_x
 inputs[2]: tensor: para
 inputs[3]: tensor: rand_para
 inputs[4]: tensor: eye Gram-S(matrix)
-inputs[5]: tensor: random_value
-inputs[6]: tensor: LE
+inputs[5]: tensor: LE
+inputs[6]: tensor: random_value
 """
 
 import torch
@@ -24,10 +24,10 @@ from layers import runge_kutta
 from layers import euler
 from layers import map_iteration
 
-"""
+
 # noise generation
 from layers import noise_generation
-"""
+
 
 # sto data generation
 from layers import maruyama
@@ -51,27 +51,29 @@ class net_generation(nn.Module):
         self.euler = euler.euler(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_PARAMETER.device)
         self.map_iteration = map_iteration.map_iteration(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_PARAMETER.device)
         
+        self.noise_generation = noise_generation.noise_generation(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
+        
         #self.maruyama = maruyama.maruyama(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
         
         #self.jacobian = jacobian.jacobian(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.Jf, MAIN_PARAMETER.device)
 
 
-    def forward(self, MAIN_DYNAMIC):
+    def forward(self, std_input):
         if self.system_type == "MD":
-            MAIN_DYNAMIC.curr_x = self.map_iteration(MAIN_DYNAMIC)
+            std_input[1] = self.map_iteration(std_input)
 
         if self.system_type == "MS":
-            MAIN_DYNAMIC.curr_x = self.map_iteration(MAIN_DYNAMIC)
-            MAIN_DYNAMIC.random_value = self.noise_generation(MAIN_DYNAMIC)
-            MAIN_DYNAMIC.curr_x = self.maruyama(MAIN_DYNAMIC)
+            std_input[1] = self.map_iteration(std_input)
+            std_input[6] = self.noise_generation(std_input)
+            std_input[1] = self.maruyama(std_input)
 
         if self.system_type == "CD":
-            MAIN_DYNAMIC.curr_x = self.runge_kutta(MAIN_DYNAMIC)
+            std_input[1] = self.runge_kutta(std_input)
 
         if self.system_type == "CS":
-            MAIN_DYNAMIC.curr_x = self.euler(MAIN_DYNAMIC)
-            MAIN_DYNAMIC.random_value = self.noise_generation(MAIN_DYNAMIC)
-            MAIN_DYNAMIC.curr_x = self.maruyama(MAIN_DYNAMIC)
+            std_input[1] = self.euler(std_input)
+            std_input[6] = self.noise_generation(std_input)
+            std_input[1] = self.maruyama(std_input)
         """
         if LE:
             self.jacobian(MAIN_DYNAMIC).to(self.device)
@@ -87,26 +89,24 @@ class net_generation(nn.Module):
 
 
 def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
-    MAIN_DYNAMIC.gen_data_group(MAIN_PARAMETER)
+    std_input = MAIN_DYNAMIC.group_gen(MAIN_PARAMETER)
     model = net_generation(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
 
     if save or LE:
-        std_data_io.std_data_io_init(MAIN_PARAMETER)
-        if LE:
-            MAIN_DYNAMIC.LE_initialization(MAIN_PARAMETER)
+        std_data_io.std_data_io_init(MAIN_PARAMETER, std_input)
 
     while 1:
-        if MAIN_DYNAMIC.curr_t > MAIN_DYNAMIC.t_max:
+        if std_input[0] > MAIN_DYNAMIC.t_max:
             break
-        MAIN_DYNAMIC.curr_t += MAIN_DYNAMIC.delta_t
+        std_input[0] += MAIN_DYNAMIC.delta_t
 
-        model(MAIN_DYNAMIC)
+        model(std_input)
 
         if save or LE:
-            std_data_io.std_data_io_main(MAIN_DYNAMIC)
+            std_data_io.std_data_io_main(MAIN_DYNAMIC, std_input)
 
     if save or LE:
-        std_data_io.std_data_io_after(MAIN_DYNAMIC)
+        std_data_io.std_data_io_after(MAIN_DYNAMIC, std_input)
     
 
     return LE
