@@ -1,18 +1,15 @@
 #==================================================
 #
-#       layer/euler.py
+#       layer/lya_spec.py
 #
 #==================================================
 import torch
 import torch.nn as nn
 
-class euler(nn.Module):
-    def __init__(self, delta_t, f, device = "cuda"):
-        super(euler, self).__init__()
-        self.delta_t = delta_t
-        self.f = f
-        self.device = device
-        
+class lya_spec(nn.Module):
+    def __init__(self, device = "cuda"):
+        super(lya_spec, self).__init__()
+
     def forward(self, std_input):
         curr_t = std_input[0]
         curr_x = std_input[1]
@@ -22,9 +19,8 @@ class euler(nn.Module):
         LE = std_input[5]
         random_value = std_input[6]
         jacobian = std_input[7]
-        
-        return curr_x + self.delta_t * self.f(curr_x, curr_t, dyn_para)
 
+        return 
 
     def extra_repr(self):
         #Output the io size for visible

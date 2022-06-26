@@ -1,14 +1,15 @@
 {
     "dyn": "model.Lorenz",
 
-    "delta_t": 1e-4, 
+    "delta_t": 1e-1, 
     "delta_t_save": -1,
-    "t_max":  1000, 
-    "t_mark": 900, 
+    "t_max":  100, 
+    "t_mark": 90, 
+    "t_save": 90, 
 
     "default_data_folder": "Local_Output",
-    "default_LE_folder": "tmp_LE_output",
-    "default_BD_folder": "tmp_BD_output",
+    "default_LE_folder": "tmp_LE_input",
+    "default_BD_folder": "tmp_BD_input",
     "image_data_file": "",
     
     "save_image_local": 1,

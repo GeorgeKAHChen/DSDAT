@@ -7,11 +7,9 @@ import torch
 import torch.nn as nn
 
 class lya_expo(nn.Module):
-    def __init__(self, delta_t, Jf, device = "cuda"):
+    def __init__(self, device = "cuda"):
         super(lya_expo, self).__init__()
-        self.delta_t = delta_t
-        self.Jf = Jf
-        self.device = device
+
 
     def forward(self, std_input):
         curr_t = std_input[0]
@@ -21,7 +19,8 @@ class lya_expo(nn.Module):
         eye = std_input[4]
         LE = std_input[5]
         random_value = std_input[6]
-        
+        jacobian = std_input[7]
+
         return 
 
     def extra_repr(self):

@@ -21,6 +21,7 @@ class noise_generation(nn.Module):
         eye = std_input[4]
         LE = std_input[5]
         random_value = std_input[6]
+        jacobian = std_input[7]
         
         return torch.rand(rand, system_group_size)
 

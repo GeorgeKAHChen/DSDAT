@@ -95,15 +95,15 @@ def main():
                                         data_file_name = data_file_name,
                                         dyn = MAIN_PARAMETER.dyn)
             if operation[1] == "20":
-                LE.append(data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
+                data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
                                           MAIN_DYNAMIC = MAIN_DYNAMIC,
                                           LE = 1, 
-                                          save = 0))
+                                          save = 0)
             else:
-                LE.append(data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
+                data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
                                           MAIN_DYNAMIC = MAIN_DYNAMIC,
                                           LE = 1, 
-                                          save = 1))
+                                          save = 1)
 
     if operation[0] == "01":
         MAIN_DYNAMIC = initialization.system_parameter()
@@ -114,12 +114,12 @@ def main():
                                     dyn = MAIN_PARAMETER.dyn)
         data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
                         MAIN_DYNAMIC = MAIN_DYNAMIC,
-                        LE = 1, 
-                        save = 0)
+                        LE = 0, 
+                        save = 1)
 
     if operation[0] == "02":
         data_merge(MAIN_PARAMETER, method = "BD")
-
+        data_type = "LSTD"
 
     if operation[0] == "12":
         print("not finish")

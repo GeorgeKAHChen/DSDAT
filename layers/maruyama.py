@@ -21,7 +21,8 @@ class maruyama(nn.Module):
         eye = std_input[4]
         LE = std_input[5]
         random_value = std_input[6]
-
+        jacobian = std_input[7]
+        
         return self.rand_f(curr_x, curr_t, random_value, rand_dyn_para, self.delta_t) 
 
     def extra_repr(self):

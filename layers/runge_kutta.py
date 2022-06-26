@@ -21,6 +21,7 @@ class runge_kutta(nn.Module):
         eye = std_input[4]
         LE = std_input[5]
         random_value = std_input[6]
+        jacobian = std_input[7]
         
         k1 = self.f(curr_x, curr_t, dyn_para)
         k2 = []

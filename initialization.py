@@ -12,6 +12,7 @@ STD_JSON = {
 
     "t_mark": 0,
     "t_max": 0,
+    "t_save": 0,
     "delta_t": 0,
     "delta_t_save": 0,
 
@@ -57,7 +58,7 @@ class system_parameter():
     def __init__(self):
         self.input_keys = ["data_type", "data_file_name"]
             # depend on computation
-        self.time_keys = ["t_mark", "t_max", "delta_t", "delta_t_save"]
+        self.time_keys = ["t_mark", "t_max", "delta_t", "delta_t_save", "t_save"]
             # read from default.json
         self.system_keys = ["system_type", "system_name", "dim", "para", "rand", "rand_para", "para_change_loc", "system_para", "system_para_min", "system_para_max", "system_group", "axis_name"]
             # read from model.py
@@ -238,18 +239,19 @@ class system_parameter():
                 break
         
         for i in range(0, len(arr)):
-            eyes.append(DoubleTensor([arr[i] for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
-            LE.append(DoubleTensor([0 for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
+            eyes.append(DoubleTensor([arr[i] for n in range(self.system_group[self.para_change_loc] + 1)]).to(MAIN_PARAMETER.device))
+            LE.append(DoubleTensor([0 for n in range(self.system_group[self.para_change_loc] + 1)]).to(MAIN_PARAMETER.device))
+        print(LE)
         return eyes, LE
 
 
 
     def group_gen(self, MAIN_PARAMETER):
-        std_input = [0 for n in range(7)]
+        std_input = [0 for n in range(10)]
 
         std_input[1], std_input[2], std_input[3] = self.gen_data_group(MAIN_PARAMETER)
         std_input[4], std_input[5] = self.LE_initialization(MAIN_PARAMETER)
-
+        std_input[8] = []
         return std_input
 
 
