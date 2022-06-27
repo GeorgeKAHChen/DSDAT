@@ -7,9 +7,10 @@ import torch
 import torch.nn as nn
 
 class lya_expo(nn.Module):
-    def __init__(self, device = "cuda"):
+    def __init__(self, delta_t, device = "cuda"):
         super(lya_expo, self).__init__()
-
+        self.delta_t = delta_t
+        self.device = device
 
     def forward(self, std_input):
         curr_t = std_input[0]
@@ -21,7 +22,7 @@ class lya_expo(nn.Module):
         random_value = std_input[6]
         jacobian = std_input[7]
 
-        return 
+        return LE[0] * curr_t /(curr_t + self.delta_t) + torch.log(jacobian[0]) * delta_t / (curr_t + self.delta_t)
 
     def extra_repr(self):
         #Output the io size for visible

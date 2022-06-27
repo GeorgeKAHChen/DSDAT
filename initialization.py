@@ -240,8 +240,9 @@ class system_parameter():
         
         for i in range(0, len(arr)):
             eyes.append(DoubleTensor([arr[i] for n in range(self.system_group[self.para_change_loc] + 1)]).to(MAIN_PARAMETER.device))
+        for i in range(0, self.dim):
             LE.append(DoubleTensor([0 for n in range(self.system_group[self.para_change_loc] + 1)]).to(MAIN_PARAMETER.device))
-        print(LE)
+        #print(LE)
         return eyes, LE
 
 

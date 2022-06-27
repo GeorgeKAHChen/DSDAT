@@ -7,14 +7,14 @@
 inputs data structure:
 
 inputs[0]: float: curr_t
-inputs[1]: tensor: curr_x
-inputs[2]: tensor: dyn_para
-inputs[3]: tensor: rand_para
-inputs[4]: tensor: eye Gram-S(matrix)
-inputs[5]: tensor: LE
-inputs[6]: tensor: random_value
-inputs[7]: tensor: jacobian
-inputs[8]: array: LE_table
+inputs[1]: array tensor: curr_x
+inputs[2]: array tensor: dyn_para
+inputs[3]: array tensor: rand_para
+inputs[4]: array tensor: eye Gram-S(matrix)
+inputs[5]: array tensor: LE
+inputs[6]: array tensor: random_value
+inputs[7]: array tensor: jacobian
+inputs[8]: array: LE_table or Value table
 """
 
 import torch
@@ -37,6 +37,7 @@ from layers import maruyama
 # LE computation
 from layers import jacobian
 from layers import lya_expo
+from layers import matrix_times
 from layers import lya_spec
 
 # data io
@@ -62,8 +63,9 @@ class net_generation(nn.Module):
         self.maruyama = maruyama.maruyama(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
         
         self.jacobian = jacobian.jacobian(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.Jf, MAIN_PARAMETER.device)
-        self.lya_expo = lya_expo.lya_expo(MAIN_PARAMETER.device)
-        self.lya_spec = lya_spec.lya_spec(MAIN_PARAMETER.device)
+        self.lya_expo = lya_expo.lya_expo(MAIN_DYNAMIC.delta_t, MAIN_PARAMETER.device)
+        self.matrix_times = matrix_times.matrix_times(MAIN_DYNAMIC.dim, MAIN_PARAMETER.device)
+        self.lya_spec = lya_spec.lya_spec(MAIN_DYNAMIC.dim, MAIN_DYNAMIC.delta_t, MAIN_PARAMETER.device)
 
     def forward(self, std_input):
         if self.system_type == "MD":
@@ -85,9 +87,10 @@ class net_generation(nn.Module):
         if self.calc_LE and std_input[0] > self.t_mark:
             std_input[7] = self.jacobian(std_input)
 
-            if MAIN_DYNAMIC.dim == 1:
+            if self.dim == 1:
                 std_input[5] = self.lya_expo(std_input)
             else:
+                std_input[4] = self.matrix_times(std_input)
                 std_input[5] = self.lya_spec(std_input)
         
         return 
@@ -115,7 +118,7 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
 
     if save:
         std_input[1] = initial_val
-        std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
+        std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
     
     if LE:
         pass

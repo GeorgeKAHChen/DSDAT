@@ -57,17 +57,17 @@ def Jf(state, delta_t, para):
     z = state[2]
 
     result = []
-    result[0].append(1.0 - delta_t * para[0])
-    result[1].append(delta_t * para[0])
-    result[2].append(0.0)
+    result.append(1.0 - delta_t * para[0])
+    result.append(delta_t * para[0])
+    result.append(0.0)
 
-    result[3].append(delta_t * (para[1] - z))
-    result[4].append(1.0 - delta_t)
-    result[5].append(-delta_t * x)
+    result.append(delta_t * (para[1] - z))
+    result.append(1.0 - delta_t)
+    result.append(-delta_t * x)
 
-    result[6].append(delta_t * y)
-    result[7].append(delta_t * x)
-    result[8].append(1.0 - delta_t * para[2])
+    result.append(delta_t * y)
+    result.append(delta_t * x)
+    result.append(1.0 - delta_t * para[2])
 
     return result
 

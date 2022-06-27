@@ -89,7 +89,11 @@ def main():
         if operation[1] == "20" or operation[1] == "21":
             LE = []
             MAIN_DYNAMIC = initialization.system_parameter()
-            data_type = "LE"
+            data_type = ""
+            if operation[1] == "20":
+                data_type = "LE"
+            else:
+                data_type = "STD"
             data_file_name = ""
             MAIN_DYNAMIC.read_from_model(data_type = data_type, 
                                         data_file_name = data_file_name,
