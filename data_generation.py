@@ -123,11 +123,10 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
         std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
     
     if LE:
-        pass
-        #save LE files
-        #file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
-        #std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
-        #std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
+        MAIN_DYNAMIC.data_type = "LE"
+        file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
+        std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
+        std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
 
     return LE
 
