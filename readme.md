@@ -43,14 +43,14 @@ This project combined some basic tools of stochastic dynamic system analysis, in
 
 Input Data Type     | 1-d M | n-d M | 1/2/3/4-d C | n-d C | Others | Output Data Type| memo 
 ---                 | ---   | ---   | ---         | ---   | ---    | --- | ---
-Data Generation     | ○     | ○     | ○           | ○     |        | STD_D| GPU/MP
-Stochastic System   | ○     | ○     | ○           | ○     |        | STD_D| GPU/MP
-Generation with LE  | ○     | ○     | ○           | ○     |        | STD_D_LE| GPU/MP
-Para - LE/LS        | ○     | ○     | ○           | ○     |        | LE_D| GPU/MP
+Data Generation     | ○     | ○     | ○           | ○     |        | STD| GPU/MP
+Stochastic System   | ○     | ○     | ○           | ○     |        | STD| GPU/MP
+Generation with LE  | ○     | ○     | ○           | ○     |        | STD + LE| GPU/MP
+Para - LE/LS        | ○     | ○     | ○           | ○     |        | LE| GPU/MP
 System Image        |       |       | ○           |       |        | (Image)| SP
 Crobweb Image       | ○     |       |             |       |        | (Image)| SP
-Poincare Section    |       |       | ○           |       |        | STD_D(1-d M)| SP
-BD Generation       | ○     | ○     | ○           | ○     |        | L_STD_D| GPU/MP
+Poincare Section    |       |       | ○           |       |        | STD(1-d M)| SP
+BD Generation       | ○     | ○     | ○           | ○     |        | LSTD| GPU/MP
 Bifucation Diagram  |       |       |             |       | ○      | (Image)| SP
 Data IO             | ○     | ○     | ○           | ○     |        | | SP
 Data Reduce         |       |       | ○           | ○     |        | Input| SP
@@ -119,18 +119,17 @@ deafult.json
 ```
 
 
-#### STD_D/STD_D_LE/STD_D_LEE
+#### STD(.data)
 ```
-[t, Data, (LE)]
+[t, x1, x2, ...]
 ```
 
-#### LE_D
+#### LE(.data)
 ``` 
-[parameter, LE]
+[parameter, LE1, LE2, ...]
 ```
 
-
-#### L_STD_D
+#### LSTD(.data)
 ``` 
-[parameter, Data]           //time t order
+[parameter, x1, x2, ...]
 ```

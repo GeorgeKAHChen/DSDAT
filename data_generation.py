@@ -101,6 +101,7 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
     std_input = MAIN_DYNAMIC.group_gen(MAIN_PARAMETER)
     initial_val = deepcopy(std_input[1])
     file_names, file_locs = 0, 0
+    t_save = 0
     model = net_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE).to(MAIN_PARAMETER.device)
 
     if save:
@@ -110,10 +111,11 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
         if std_input[0] > MAIN_DYNAMIC.t_max:
             break
         std_input[0] += MAIN_DYNAMIC.delta_t
-
+        t_save += MAIN_DYNAMIC.delta_t
         model(std_input)
 
-        if save:
+        if save and t_save >= MAIN_DYNAMIC.t_save:
+            t_save = 0
             std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
 
     if save:
