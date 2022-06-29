@@ -1,18 +1,16 @@
 {
     "dyn": "model.Lorenz",
 
-    "delta_t": 1e-1, 
+    "delta_t": 1e-2, 
     "delta_t_save": -1,
-    "t_max":  100, 
-    "t_mark": 90, 
-    "t_save": 90, 
+    "t_max":  1000, 
+    "t_mark": 900, 
+    "t_save": 990, 
 
-    "default_data_folder": "Local_Output",
-    "default_LE_folder": "tmp_LE_input",
-    "default_BD_folder": "tmp_BD_input",
+    "default_data_folder": "local_output",
+    "read_folder": "output/tmp_data",
     "image_data_file": "",
     
     "save_image_local": 1,
-    "use_GPU_computation": 1,
     "device": "cpu"
 }

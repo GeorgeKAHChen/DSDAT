@@ -23,10 +23,11 @@ STD_JSON = {
     
     "para_change_loc": 0,
     "system_para": [],
+    "para_name":[],
     "system_para_min": [],
     "system_para_max": [],
     "system_group": [],
-
+    
     "axis_name":[],
     "LE": "",
     "memo": ""
@@ -39,7 +40,7 @@ STD_JSON = {
 class main_parameters():
     def __init__(self):
         #super(init, self).__init__()
-        self.keys = ["dyn", "default_data_folder", "default_LE_folder", "default_BD_folder", "image_data_file", "save_image_local", "use_GPU_computation", "device"]
+        self.keys = ["dyn", "default_data_folder", "read_folder", "image_data_file", "save_image_local", "device"]
         for kase in self.keys:
             setattr(self, kase, 0)        
 
@@ -74,6 +75,7 @@ class system_parameter():
         for kase in self.results_keys:
             setattr(self, kase, 0)
 
+        self.para_name = 0
         self.f = 0
         self.rand_f = 0
         self.Jf = 0
@@ -83,7 +85,8 @@ class system_parameter():
     def read_from_json(self, filename):
         from libpy.Init import read_json
         import os
-        json_file = read_json(os.path.join(os.getcwd(), filename))
+        print(filename)
+        json_file = read_json(filename)
         for kase in self.input_keys:
             setattr(self, kase, json_file[kase])
         for kase in self.time_keys:
@@ -92,7 +95,7 @@ class system_parameter():
             setattr(self, kase, json_file[kase])
         for kase in self.results_keys:
             setattr(self, kase, json_file[kase])
-        
+        self.para_name = json_file["para_name"]
         return
 
 
@@ -101,16 +104,18 @@ class system_parameter():
                         data_type = "STD", 
                         data_file_name = "",
                         dyn = 0):
+        from copy import deepcopy
+        from libpy.Init import read_json
+        import os
+        import importlib
+
         self.data_type = data_type
         self.data_file_name = data_file_name
         
-        from libpy.Init import read_json
-        import os
         json_file = read_json(os.path.join(os.getcwd(), "default.json"))
         for kase in self.time_keys:
             setattr(self, kase, json_file[kase])
         
-        import importlib
         dyn = importlib.import_module(dyn)
         for kase in self.system_keys:
             setattr(self, kase, getattr(dyn, kase))
@@ -118,7 +123,7 @@ class system_parameter():
         self.f = dyn.f
         self.rand_f = dyn.rand_f
         self.Jf = dyn.Jf
-        
+        self.para_name = deepcopy(self.axis_name)
         return
 
 
@@ -137,6 +142,8 @@ class system_parameter():
             new_json[kase] = getattr(self, kase)
         for kase in self.results_keys:
             new_json[kase] = getattr(self, kase)
+        
+        new_json["para_name"] = self.para_name
         new_json = str(json.dumps(new_json)+"\n")
 
         File = open(json_file_name, "w")

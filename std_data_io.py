@@ -4,7 +4,11 @@
 
 ========================================="""
 
-def get_delta_para(MAIN_DYNAMIC, std_input):
+
+
+def get_delta_para(MAIN_DYNAMIC, std_input, tensor_direct = 0):
+    if tensor_direct:
+        return std_input[1][0]
     loc = MAIN_DYNAMIC.para_change_loc + 1
     if loc - MAIN_DYNAMIC.dim < 0 and loc > 0:
         return std_input[1][loc - 1]
@@ -87,7 +91,7 @@ def std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input):
 
 
     
-def std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs):
+def std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, tensor_direct = 0):
     import os
     if MAIN_DYNAMIC.data_type == "STD":
         for i in range(0, len(file_names)):
@@ -132,7 +136,7 @@ def std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, fi
 
 
     
-def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE):
+def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE, name_direct = 0):
     import os
     from copy import deepcopy
     NEW_DYNAMIC = deepcopy(MAIN_DYNAMIC)
@@ -154,7 +158,8 @@ def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, f
                 #print(NEW_DYNAMIC.LE)
             else:
                 NEW_DYNAMIC.LE = []
-            NEW_DYNAMIC.axis_name = ["time_t"] + MAIN_DYNAMIC.axis_name[0: MAIN_DYNAMIC.dim]
+            if not name_direct:
+                NEW_DYNAMIC.axis_name = ["time_t"] + MAIN_DYNAMIC.axis_name[0: MAIN_DYNAMIC.dim]
             NEW_DYNAMIC.save_as_json(file_locs[i][0])
 
     elif NEW_DYNAMIC.data_type == "LE" or NEW_DYNAMIC.data_type == "LSTD":
@@ -172,45 +177,14 @@ def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, f
 
 
 
-def LSTD_merge(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs):
-    """
-    Here the std_input[8] is a special type, a super group formed 
-    [
-        [tensor([x1, x2, ...]), tensor([y1, y2, ...]) ...],     # Para_1
-        [tensor([x1, x2, ...]), tensor([y1, y2, ...]) ...],     # Para_2
-        [tensor([x1, x2, ...]), tensor([y1, y2, ...]) ...],     # Para_3
-        ...
-    ]
-    and std_input[1, 2, 3] are normal parameter tensor
-    """
-    std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
-    loc = MAIN_DYNAMIC.para_change_loc
-    string = ""
-    changed_tensor = get_delta_para(MAIN_DYNAMIC, std_input)
-    file = open(file_locs[0][1], "w")
-    for i in range(0, len(std_input[8])):
-        string = ""
-        for j in range(0, len(std_input[8][0][0])):
-            string += str(float(changed_tensor[i])) + " "
-            for k in range(0, MAIN_DYNAMIC.dim):
-                string += str(float(std_input[8][k][j]))
-                if k+1 < MAIN_DYNAMIC.dim:
-                    string +=" "
-            string += "\n"
-        file.write(string)
-    file.close()
-    MAIN_DYNAMIC.axis_name = [MAIN_DYNAMIC.axis_name[MAIN_DYNAMIC.para_change_loc]] + MAIN_DYNAMIC.axis_name[0: MAIN_DYNAMIC.dim]
-    std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
+def std_data_input_json(MAIN_PARAMETER, json_file_loc):
+    import initialization
+    MAIN_DYNAMIC = initialization.system_parameter()
+    MAIN_DYNAMIC.read_from_json(json_file_loc)
+    std_input = MAIN_DYNAMIC.group_gen(MAIN_PARAMETER)
+    return MAIN_DYNAMIC, std_input
 
 
-
-def std_data_input_init(MAIN_PARAMETER, MAIN_DYNAMIC):
-    return 
-
-
-
-def std_data_input_main(MAIN_PARAMETER, MAIN_DYNAMIC):
-    return 
 
 
 

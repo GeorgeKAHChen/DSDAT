@@ -2,66 +2,78 @@
 
 This project combined some basic tools of stochastic dynamic system analysis, include 
 
-## 1-d Map(D/S)
+## 0 Data Generator
 
-#### Data Generation
+This tool can compute the orbit of systems and LE in the same time.
 
-#### Lyapunov Exponent
+#### 01. Just Save orbit
 
-#### Crobweb Image
+save orbit(STD) without calculate LE
 
-## n-d Map(D/S)
+#### 10: Just Save LE
 
-#### Data Generation
+not save orbit(STD) and calculate LE
 
-#### Lyapunov Spectrum
+#### 11: Save both LE and orbit
 
-## 1/2/3/4-d Continuous(D/S)
+save both orbit(STD) and calculate LE
 
-#### Data Generation
 
-#### Lyapunov Spectrum
 
-#### System Image
 
-#### Poincare Section
+## 1 Data Merge
 
-## n-d Continuous(D/S)
+This tool can merge data files for LE plot or bifucation diagram plot.
 
-#### Data Generation
+### flags
 
-#### Lyapunov Spectrum
+#### 0: Merge LE
 
-## Other Functions
+merge LE data from json files 
 
-#### Data IO
+#### 1: Merge Data
+
+merge STD data to LSTD
+
+## 2 Image Plot
+
+This tools can plot image depend on the `data_type`, `system_type` and `dim`
+
+### flags
+
+#### [plot file name] flags
+
+flags table
+Input Data Type     | 1-dim | 2-dim | 3-dim | 4-dim             | n-dim
+---                 | ---   | ---   | ---   | ---               | ---
+STD                 | /     | /     | /     | [i,j]/[i,j,k]     | [i,j]/[i,j,k]
+LSTD                | /     | i     | i     | i                 | i
+LE                  | /     | /     | /     | [fig1, fig2, ...] |  [fig1, fig2, ...] 
+
+#### `STD`: [i, j]/[i, j, k]
+
+The system higher than 3 dimension will print 2/3-d dim figure depend on flag
+
+#### `LSTD`: i
+
+The system higher than 1 dimension will print bifucation diagram of parameter - x_i figure
+
+#### `LE`: [fig1, fig2, ..., fign]
+
+The system higher than 3 dimension will print n subfigure, every subfigure include fig_i LE.
+
+
+
+## Poincare section
+
+not finish
+
+## Data Generation
 
 #### Data Reduce
 
-#### Bifucation diagram
+not finish
 
-
-Input Data Type     | 1-d M | n-d M | 1/2/3/4-d C | n-d C | Others | Output Data Type| memo 
----                 | ---   | ---   | ---         | ---   | ---    | --- | ---
-Data Generation     | ○     | ○     | ○           | ○     |        | STD| GPU/MP
-Stochastic System   | ○     | ○     | ○           | ○     |        | STD| GPU/MP
-Generation with LE  | ○     | ○     | ○           | ○     |        | STD + LE| GPU/MP
-Para - LE/LS        | ○     | ○     | ○           | ○     |        | LE| GPU/MP
-System Image        |       |       | ○           |       |        | (Image)| SP
-Crobweb Image       | ○     |       |             |       |        | (Image)| SP
-Poincare Section    |       |       | ○           |       |        | STD(1-d M)| SP
-BD Generation       | ○     | ○     | ○           | ○     |        | LSTD| GPU/MP
-Bifucation Diagram  |       |       |             |       | ○      | (Image)| SP
-Data IO             | ○     | ○     | ○           | ○     |        | | SP
-Data Reduce         |       |       | ○           | ○     |        | Input| SP
-
-* M: Map
-
-* C: Continuous system
-
-* SP: single processing
-
-* GPU/MP: using gpu or multiprocessing to calculation
 
 
 ## Data Type Introduction
@@ -78,13 +90,13 @@ deafult.json
 
     "default_data_folder": "Local_Output",  // folder for save data
     "default_LE_folder": "tmp_LE_input",    // folder for merge data to LE
-    "default_BD_folder": "tmp_BD_input",    // folder for merge data to LSTD
     "image_data_file": "",
     
     "save_image_local": 1,                  // Save image when plot
     "device": "cpu"                         // Use cpu or cuda(:1/:2)
 }
 ```
+
 
 
 #### Standard Data Information json File
@@ -120,16 +132,34 @@ deafult.json
 
 
 #### STD(.data)
-```
+``` dat
 [t, x1, x2, ...]
 ```
 
 #### LE(.data)
-``` 
+``` dat
 [parameter, LE1, LE2, ...]
 ```
 
 #### LSTD(.data)
-``` 
+``` dat
 [parameter, x1, x2, ...]
 ```
+
+#### code std_input array
+``` python
+#inputs data structure
+
+inputs[0] = (float) curr_t;
+inputs[1] = array[TensorDouble] curr_x;
+inputs[2] = array[TensorDouble] dyn_para;
+inputs[3] = array[TensorDouble] rand_para;
+inputs[4] = array[TensorDouble] eye Gram_S(matrix);
+inputs[5] = array[TensorDouble] LE;
+inputs[6] = array[TensorDouble] random_value;
+inputs[7] = array[TensorDouble] jacobian;
+inputs[8] = array[double]: LE_table / Value table;
+```
+
+
+

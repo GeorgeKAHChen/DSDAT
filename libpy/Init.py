@@ -1,3 +1,4 @@
+# Init version: 220619/01
 ############################################################
 #
 #        Some useful function
@@ -239,8 +240,14 @@ def GetSufixFile(dir_name, sufixSet):
     im_name = []
     for parent, dirs, files in os.walk(dir_name):
         for file in files:
-            print(file)
-            name,sufix = file.split('.')
+            #print(file)
+            part_name = file.split('.')
+            name = ""
+            for i in range(0, len(part_name) - 1):
+                name += part_name[i]
+                if i+1 < len(part_name) - 1:
+                    name += "."
+            sufix = part_name[len(part_name) - 1]
             im_path = ""
             if sufix in sufixSet:
                 im_path = os.path.join(parent,file)
@@ -635,6 +642,7 @@ def read_json(filename = "", input_string = ""):
                 continue
             else:
                 str_json += input_string[i]
+
     return json.loads(str_json)
 
 
