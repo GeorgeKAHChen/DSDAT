@@ -101,6 +101,7 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
     while 1:
         if std_input[0] > MAIN_DYNAMIC.t_max:
             break
+        
         if DEBUG and kase % 100000 == 0:
             print(std_input[0], MAIN_DYNAMIC.t_max)
             kase = 0

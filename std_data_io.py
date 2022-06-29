@@ -8,7 +8,7 @@
 
 def get_delta_para(MAIN_DYNAMIC, std_input, tensor_direct = 0):
     if tensor_direct:
-        return std_input[1][0]
+        return std_input[2][0]
     loc = MAIN_DYNAMIC.para_change_loc + 1
     if loc - MAIN_DYNAMIC.dim < 0 and loc > 0:
         return std_input[1][loc - 1]
@@ -37,7 +37,7 @@ def std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input):
     
     if MAIN_DYNAMIC.data_type == "STD":
         tmp_name = MAIN_DYNAMIC.system_name + "_" 
-        tmp_name += MAIN_DYNAMIC.axis_name[MAIN_DYNAMIC.para_change_loc] + "_"
+        tmp_name += MAIN_DYNAMIC.para_name[MAIN_DYNAMIC.para_change_loc] + "_"
         
         changed_tensor = get_delta_para(MAIN_DYNAMIC, std_input)
 
@@ -59,18 +59,18 @@ def std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input):
         else:
             os.mkdir(location)
 
-    elif MAIN_DYNAMIC.data_type == "LSTD":
+    elif MAIN_DYNAMIC.data_type == "LE":
         tmp_name = MAIN_DYNAMIC.system_name + "_" 
-        tmp_name += MAIN_DYNAMIC.axis_name[MAIN_DYNAMIC.para_change_loc] + "_"
+        tmp_name = "LE" + "_" 
+        tmp_name += MAIN_DYNAMIC.para_name[MAIN_DYNAMIC.para_change_loc] + "_"
         tmp_name += str(MAIN_DYNAMIC.system_para_min[MAIN_DYNAMIC.para_change_loc]) + "_"
         tmp_name += str(MAIN_DYNAMIC.system_para_max[MAIN_DYNAMIC.para_change_loc])
         file_names.append(tmp_name)
         location = MAIN_PARAMETER.default_data_folder
 
-    elif MAIN_DYNAMIC.data_type == "LE":
+    elif MAIN_DYNAMIC.data_type == "LSTD":
         tmp_name = MAIN_DYNAMIC.system_name + "_" 
-        tmp_name = "LE" + "_" 
-        tmp_name += MAIN_DYNAMIC.axis_name[MAIN_DYNAMIC.para_change_loc] + "_"
+        tmp_name += MAIN_DYNAMIC.para_name[MAIN_DYNAMIC.para_change_loc] + "_"
         tmp_name += str(MAIN_DYNAMIC.system_para_min[MAIN_DYNAMIC.para_change_loc]) + "_"
         tmp_name += str(MAIN_DYNAMIC.system_para_max[MAIN_DYNAMIC.para_change_loc])
         file_names.append(tmp_name)
@@ -78,15 +78,13 @@ def std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input):
 
     for i in range(0, len(file_names)):
         tmp_loc1 = os.path.join(location, file_names[i] + ".json")
+        if os.path.exists(tmp_loc1):
+            os.remove(tmp_loc1)        
         tmp_loc2 = os.path.join(location, file_names[i] + ".data")
+        if os.path.exists(tmp_loc2):
+            os.remove(tmp_loc2)       
         file_locs.append([tmp_loc1, tmp_loc2])
     
-    #print(file_names, file_locs)
-    for i in range(0, len(file_locs)):
-        if os.path.exists(file_locs[i][0]):
-            os.remove(file_locs[i][0])
-        if os.path.exists(file_locs[i][1]):
-            os.remove(file_locs[i][1])
     return file_names, file_locs
 
 
@@ -113,7 +111,7 @@ def std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, fi
     elif MAIN_DYNAMIC.data_type == "LE" or MAIN_DYNAMIC.data_type == "LSTD":
         loc = MAIN_DYNAMIC.para_change_loc
         string = ""
-        changed_tensor = get_delta_para(MAIN_DYNAMIC, std_input)
+        changed_tensor = get_delta_para(MAIN_DYNAMIC, std_input, tensor_direct)
         for i in range(0, len(changed_tensor)):
             string += str(float(changed_tensor[i])) + " "
             for j in range(0, MAIN_DYNAMIC.dim):
@@ -136,14 +134,14 @@ def std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, fi
 
 
     
-def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE, name_direct = 0):
+def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE):
     import os
     from copy import deepcopy
     NEW_DYNAMIC = deepcopy(MAIN_DYNAMIC)
 
     if NEW_DYNAMIC.data_type == "STD":
         for i in range(0, len(file_names)):
-            NEW_DYNAMIC.data_file_name = file_locs[i][1]
+            NEW_DYNAMIC.data_file_name = file_names[i] + ".data"
             NEW_DYNAMIC.system_para = []
             for j in range(0, NEW_DYNAMIC.dim):
                 NEW_DYNAMIC.system_para.append(float(std_input[1][j][i]))
@@ -158,19 +156,18 @@ def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, f
                 #print(NEW_DYNAMIC.LE)
             else:
                 NEW_DYNAMIC.LE = []
-            if not name_direct:
-                NEW_DYNAMIC.axis_name = ["time_t"] + MAIN_DYNAMIC.axis_name[0: MAIN_DYNAMIC.dim]
+
+            NEW_DYNAMIC.axis_name = ["time_t"] + MAIN_DYNAMIC.para_name[0: MAIN_DYNAMIC.dim]
             NEW_DYNAMIC.save_as_json(file_locs[i][0])
 
     elif NEW_DYNAMIC.data_type == "LE" or NEW_DYNAMIC.data_type == "LSTD":
-        
-        NEW_DYNAMIC.data_file_name = file_locs[0][1]
+        NEW_DYNAMIC.data_file_name = file_names[0] + ".data"
         if NEW_DYNAMIC.data_type == "LE":
-            NEW_DYNAMIC.axis_name = [MAIN_DYNAMIC.axis_name[MAIN_DYNAMIC.para_change_loc]]
+            NEW_DYNAMIC.axis_name = [MAIN_DYNAMIC.para_name[MAIN_DYNAMIC.para_change_loc]]
             for i in range(0, MAIN_DYNAMIC.dim):
                 NEW_DYNAMIC.axis_name.append("lambda"+str(i))
         else:
-            NEW_DYNAMIC.axis_name = [MAIN_DYNAMIC.axis_name[MAIN_DYNAMIC.para_change_loc]] + MAIN_DYNAMIC.axis_name[0: MAIN_DYNAMIC.dim]
+            NEW_DYNAMIC.axis_name = [MAIN_DYNAMIC.para_name[MAIN_DYNAMIC.para_change_loc]] + MAIN_DYNAMIC.para_name[0: MAIN_DYNAMIC.dim]
         NEW_DYNAMIC.save_as_json(file_locs[0][0])
 
     return 
