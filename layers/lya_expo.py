@@ -17,7 +17,7 @@ class lya_expo(nn.Module):
         LE = std_input[5]
         jacobian = std_input[7]
 
-        return LE[0] * curr_t /(curr_t + self.delta_t) + torch.log(jacobian[0]) * delta_t / (curr_t + self.delta_t)
+        return (LE[0] * curr_t /(curr_t + self.delta_t) + torch.log(torch.abs(jacobian[0])) * self.delta_t / (curr_t + self.delta_t)).resize_(1, len(std_input[1][0]))
 
     def extra_repr(self):
         #Output the io size for visible

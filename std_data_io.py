@@ -10,12 +10,12 @@ def get_delta_para(MAIN_DYNAMIC, std_input, tensor_direct = 0):
     if tensor_direct:
         return std_input[2][0]
     loc = MAIN_DYNAMIC.para_change_loc + 1
-    if loc - MAIN_DYNAMIC.dim < 0 and loc > 0:
+    if loc - MAIN_DYNAMIC.dim <= 0 and loc > 0:
         return std_input[1][loc - 1]
     else:
         loc -= MAIN_DYNAMIC.dim
 
-    if loc - MAIN_DYNAMIC.para < 0 and loc > 0:
+    if loc - MAIN_DYNAMIC.para <= 0 and loc > 0:
         return std_input[2][loc - 1]
     else:
         loc -= MAIN_DYNAMIC.para

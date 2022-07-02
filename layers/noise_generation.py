@@ -14,7 +14,7 @@ class noise_generation(nn.Module):
         self.device = device
         
     def forward(self):
-        return torch.rand(self.rand, self.system_group_size)
+        return torch.rand(self.rand, self.system_group_size).to(self.device)
 
 
     def extra_repr(self):

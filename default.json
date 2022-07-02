@@ -1,5 +1,5 @@
 {
-    "dyn": "model.Lorenz",
+    "dyn": "model.SERS",
 
     "delta_t": 1e-2, 
     "delta_t_save": -1,

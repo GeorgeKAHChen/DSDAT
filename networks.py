@@ -36,8 +36,8 @@ class MS_calc(nn.Module):
     def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC):
         super(MS_calc, self).__init__()
         self.map_iteration = map_iteration.map_iteration(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_PARAMETER.device)
-        self.noise_generation = noise_generation.noise_generation(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
-        self.maruyama = maruyama.maruyama(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
+        self.noise_generation = noise_generation.noise_generation(MAIN_DYNAMIC.rand, MAIN_DYNAMIC.system_group[MAIN_DYNAMIC.para_change_loc], MAIN_PARAMETER.device)
+        self.maruyama = maruyama.maruyama(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_DYNAMIC.dim, MAIN_PARAMETER.device)
         
     def forward(self, std_input):
         std_input[1] = self.map_iteration(std_input)
@@ -58,9 +58,9 @@ class CD_calc(nn.Module):
 class CS_calc(nn.Module):
     def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC):
         super(CS_calc, self).__init__()
-        self.euler = euler.euler(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_PARAMETER.device)
-        self.noise_generation = noise_generation.noise_generation(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
-        self.maruyama = maruyama.maruyama(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
+        self.euler = euler.euler(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_DYNAMIC.dim, MAIN_PARAMETER.device)
+        self.noise_generation = noise_generation.noise_generation(MAIN_DYNAMIC.rand, MAIN_DYNAMIC.system_group[MAIN_DYNAMIC.para_change_loc], MAIN_PARAMETER.device)
+        self.maruyama = maruyama.maruyama(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_DYNAMIC.dim, MAIN_PARAMETER.device)
         
     def forward(self, std_input):
         std_input[1] = self.euler(std_input)

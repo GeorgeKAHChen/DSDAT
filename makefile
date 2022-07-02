@@ -1,8 +1,10 @@
 
-main:
-	rm -rf Local_Output
+main:clear
 	time python main.py 0 10
 
+full:clear
+	time python main.py 0 11
+
 clear:
-	rm -rf Local_Output
+	rm -rf local_output
 	

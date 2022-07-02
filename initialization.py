@@ -111,11 +111,7 @@ class system_parameter():
 
         self.data_type = data_type
         self.data_file_name = data_file_name
-        
-        json_file = read_json(os.path.join(os.getcwd(), "default.json"))
-        for kase in self.time_keys:
-            setattr(self, kase, json_file[kase])
-        
+                
         dyn = importlib.import_module(dyn)
         for kase in self.system_keys:
             setattr(self, kase, getattr(dyn, kase))
@@ -124,6 +120,12 @@ class system_parameter():
         self.rand_f = dyn.rand_f
         self.Jf = dyn.Jf
         self.para_name = deepcopy(self.axis_name)
+
+        json_file = read_json(os.path.join(os.getcwd(), "default.json"))
+        for kase in self.time_keys:
+            setattr(self, kase, json_file[kase])
+        if self.system_type == "MD" or self.system_type == "MS":
+            self.delta_t = 1
         return
 
 
@@ -216,9 +218,17 @@ class system_parameter():
                         data_group[1].append(deepcopy(dyn_para))
                         data_group[2].append(deepcopy(dyn_rand_para))
                     dyn_rand_para[tmp_loc] = self.system_para_max[self.para_change_loc]
-                data_group[0].append(deepcopy(initial_val))
-                data_group[1].append(deepcopy(dyn_para))
-                data_group[2].append(deepcopy(dyn_rand_para))
+                while 1:
+                    if len(data_group[0]) < self.system_group[self.para_change_loc]:
+                        data_group[0].append(deepcopy(initial_val))
+                        data_group[1].append(deepcopy(dyn_para))
+                        data_group[2].append(deepcopy(dyn_rand_para))
+                    else:
+                        break
+                        
+                data_group[0] = data_group[0][0: self.system_group[self.para_change_loc]]
+                data_group[1] = data_group[1][0: self.system_group[self.para_change_loc]]
+                data_group[2] = data_group[2][0: self.system_group[self.para_change_loc]]
         data_group = [np.array(data_group[0]), np.array(data_group[1]),  np.array(data_group[2])]
         
         curr_x = []
@@ -246,9 +256,9 @@ class system_parameter():
                 break
         
         for i in range(0, len(arr)):
-            eyes.append(DoubleTensor([arr[i] for n in range(self.system_group[self.para_change_loc] + 1)]).to(MAIN_PARAMETER.device))
+            eyes.append(DoubleTensor([arr[i] for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
         for i in range(0, self.dim):
-            LE.append(DoubleTensor([0 for n in range(self.system_group[self.para_change_loc] + 1)]).to(MAIN_PARAMETER.device))
+            LE.append(DoubleTensor([0 for n in range(self.system_group[self.para_change_loc])]).to(MAIN_PARAMETER.device))
         #print(LE)
         return eyes, LE
 

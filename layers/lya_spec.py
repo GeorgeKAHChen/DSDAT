@@ -41,7 +41,7 @@ class lya_spec(nn.Module):
                 eye[i + self.dim*j] /= new_spec[i]
 
         for i in range(0, len(LE)):
-            LE[i] = LE[i] * curr_t /(curr_t + self.delta_t) + torch.log(new_spec[i]) * self.delta_t / (curr_t + self.delta_t)
+            LE[i] = (curr_t * LE[i] + self.delta_t * torch.log(new_spec[i])) / (curr_t + self.delta_t)
         #print(LE[0][0], LE[1][0], LE[2][0])
         return LE
 
