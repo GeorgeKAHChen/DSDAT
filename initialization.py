@@ -225,12 +225,12 @@ class system_parameter():
         dyn_para = []
         rand_dyn_para = []
         for kase in range(0, self.dim):
-            curr_x.append(DoubleTensor(data_group[0][:, kase]).to(MAIN_PARAMETER.device))
+            curr_x.append(data_group[0][:, kase])
         for kase in range(0, self.para):
-            dyn_para.append(DoubleTensor(data_group[1][:, kase]).to(MAIN_PARAMETER.device))
+            dyn_para.append(data_group[1][:, kase])
         for kase in range(0, self.rand_para):
-            rand_dyn_para.append(DoubleTensor(data_group[2][:, kase]).to(MAIN_PARAMETER.device))
-        return curr_x, dyn_para, rand_dyn_para
+            rand_dyn_para.append(data_group[2][:, kase])
+        return DoubleTensor(np.array(curr_x)).to(MAIN_PARAMETER.device), DoubleTensor(np.array(dyn_para)).to(MAIN_PARAMETER.device), DoubleTensor(np.array(rand_dyn_para)).to(MAIN_PARAMETER.device)
 
 
     def LE_initialization(self, MAIN_PARAMETER):

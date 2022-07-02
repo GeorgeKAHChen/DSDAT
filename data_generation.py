@@ -1,7 +1,6 @@
 """=========================================
     
     data_generation.py
-
 ========================================="""
 
 import torch
@@ -115,10 +114,3 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
         std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
 
     return LE
-
-
-
-
-
-
-

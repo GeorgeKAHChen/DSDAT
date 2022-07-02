@@ -41,7 +41,7 @@ class MS_calc(nn.Module):
         
     def forward(self, std_input):
         std_input[1] = self.map_iteration(std_input)
-        std_input[6] = self.noise_generation(std_input)
+        std_input[6] = self.noise_generation()
         std_input[1] = self.maruyama(std_input)
 
 
@@ -64,7 +64,7 @@ class CS_calc(nn.Module):
         
     def forward(self, std_input):
         std_input[1] = self.euler(std_input)
-        std_input[6] = self.noise_generation(std_input)
+        std_input[6] = self.noise_generation()
         std_input[1] = self.maruyama(std_input)
 
 
