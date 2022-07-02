@@ -37,6 +37,9 @@ def check_register(registers, str_input = ""):
 
 
 def main():
+    MAIN_PARAMETER = initialization.main_parameters()
+    MAIN_PARAMETER.initialization()
+
     operation = []
     if len(sys.argv) == 1:
         print("Welcome to use Dynamic System Data Analysis Tools (DSDAT)")
@@ -49,9 +52,6 @@ def main():
 
     else:
         operation.append(check_register(["0", "1", "2"], sys.argv[1]))
-
-    MAIN_PARAMETER = initialization.main_parameters()
-    MAIN_PARAMETER.initialization()
 
 
     if operation[0] == "0":

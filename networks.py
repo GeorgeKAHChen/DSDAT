@@ -71,7 +71,7 @@ class CS_calc(nn.Module):
 
 class LE_1(nn.Module):
     def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC):
-        super(MD_LE_1, self).__init__()
+        super(LE_1, self).__init__()
         self.jacobian = jacobian.jacobian(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.Jf, MAIN_PARAMETER.device)
         self.lya_expo = lya_expo.lya_expo(MAIN_DYNAMIC.delta_t, MAIN_PARAMETER.device)
         
@@ -83,7 +83,7 @@ class LE_1(nn.Module):
 
 class LE_n(nn.Module):
     def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC):
-        super(MD_LE_n, self).__init__()
+        super(LE_n, self).__init__()
         self.jacobian = jacobian.jacobian(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.Jf, MAIN_PARAMETER.device)
         self.matrix_times = matrix_times.matrix_times(MAIN_DYNAMIC.dim, MAIN_PARAMETER.device)
         self.lya_spec = lya_spec.lya_spec(MAIN_DYNAMIC.dim, MAIN_DYNAMIC.delta_t, MAIN_PARAMETER.device)
