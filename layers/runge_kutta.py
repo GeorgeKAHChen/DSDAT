@@ -32,18 +32,14 @@ class runge_kutta(nn.Module):
             k4.append(curr_x[i] + self.delta_t * k2[i]) 
         k4 = self.f(k4, curr_t + self.delta_t, dyn_para).to(self.device)
         """
-        k1 = torch.cat(self.f(curr_x, curr_t, dyn_para))
-        k1.resize_(self.dim, tensor_size)
-        k2 = curr_x + self.delta_t * 0.5 * k1
-        k2 = torch.cat(self.f(k2, curr_t + self.delta_t * 0.5, dyn_para))
-        k2.resize_(self.dim, tensor_size)
-        k3 = curr_x + self.delta_t * 0.5 * k2
-        k3 = torch.cat(self.f(k3, curr_t + self.delta_t * 0.5, dyn_para))
-        k3.resize_(self.dim, tensor_size)
-        k4 = curr_x + self.delta_t * k2
-        k4 = torch.cat(self.f(k4, curr_t + self.delta_t, dyn_para))
-        k4.resize_(self.dim, tensor_size)
-        curr_x = (curr_x + self.delta_t * (k1 + 2 * k2 + 2 * k3 + k4) * (1/6))
+        k1 = torch.cat(self.f(curr_x, curr_t, dyn_para)).resize_(self.dim, tensor_size).to(self.device)
+        k2 = (curr_x + self.delta_t * 0.5 * k1).to(self.device)
+        k2 = torch.cat(self.f(k2, curr_t + self.delta_t * 0.5, dyn_para)).resize_(self.dim, tensor_size).to(self.device)
+        k3 = (curr_x + self.delta_t * 0.5 * k2).to(self.device)
+        k3 = torch.cat(self.f(k3, curr_t + self.delta_t * 0.5, dyn_para)).resize_(self.dim, tensor_size).to(self.device)
+        k4 = (curr_x + self.delta_t * k2).to(self.device)
+        k4 = torch.cat(self.f(k4, curr_t + self.delta_t, dyn_para)).resize_(self.dim, tensor_size).to(self.device)
+        curr_x = (curr_x + self.delta_t * (k1 + 2 * k2 + 2 * k3 + k4) * (1/6)).to(self.device)
         return curr_x
 
     def extra_repr(self):

@@ -15,8 +15,7 @@ class matrix_times(nn.Module):
     def forward(self, std_input):
         eye = std_input[4]
         jacobian = std_input[7]
-        #print(eye)
-        #print(jacobian)
+        
         mat_result = [0 for n in range(self.dim * self.dim)]
         for i in range(0, self.dim):
             for j in range(0, self.dim):
@@ -24,8 +23,7 @@ class matrix_times(nn.Module):
                 for k in range(0, self.dim):
                     mat_result[i * self.dim + j] += jacobian[i * self.dim + k] * eye[j + k * self.dim];
 
-        #print(mat_result)
-        #input()
+
         return mat_result
 
     def extra_repr(self):
