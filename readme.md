@@ -47,8 +47,9 @@ flags table
 Input Data Type     | 1-dim | 2-dim | 3-dim | 4-dim             | n-dim
 ---                 | ---   | ---   | ---   | ---               | ---
 STD                 | /     | /     | /     | [i,j]/[i,j,k]     | [i,j]/[i,j,k]
-LSTD                | /     | i     | i     | i                 | i
 LE                  | /     | /     | /     | [fig1, fig2, ...] |  [fig1, fig2, ...] 
+LSTD                | /     | i     | i     | i                 | i
+
 
 #### `STD`: [i, j]/[i, j, k]
 

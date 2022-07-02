@@ -8,97 +8,50 @@ import torch
 import torch.nn as nn
 from copy import deepcopy
 
-# det data generation
-from layers import runge_kutta
-from layers import euler
-from layers import map_iteration
-
-
-# noise generation
-from layers import noise_generation
-
-
-# sto data generation
-from layers import maruyama
-
-# LE computation
-from layers import jacobian
-from layers import lya_expo
-from layers import matrix_times
-from layers import lya_spec
-
-# data io
+import networks
 import std_data_io
-
 
 DEBUG = 1
 
-
-class net_generation(nn.Module):
-    def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC, LE):
-        super(net_generation, self).__init__()
-        self.device = MAIN_PARAMETER.device
-        
-        self.t_mark = MAIN_DYNAMIC.t_mark
-        self.system_type = MAIN_DYNAMIC.system_type
-        self.dim = MAIN_DYNAMIC.dim
-
-        self.calc_LE = LE
-
-        self.runge_kutta = runge_kutta.runge_kutta(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_PARAMETER.device)
-        self.euler = euler.euler(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_PARAMETER.device)
-        self.map_iteration = map_iteration.map_iteration(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_PARAMETER.device)
-        
-        self.noise_generation = noise_generation.noise_generation(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
-        self.maruyama = maruyama.maruyama(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.rand_f, MAIN_PARAMETER.device)
-        
-        self.jacobian = jacobian.jacobian(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.Jf, MAIN_PARAMETER.device)
-        self.lya_expo = lya_expo.lya_expo(MAIN_DYNAMIC.delta_t, MAIN_PARAMETER.device)
-        self.matrix_times = matrix_times.matrix_times(MAIN_DYNAMIC.dim, MAIN_PARAMETER.device)
-        self.lya_spec = lya_spec.lya_spec(MAIN_DYNAMIC.dim, MAIN_DYNAMIC.delta_t, MAIN_PARAMETER.device)
-
-    def forward(self, std_input):
-        if self.system_type == "MD":
-            std_input[1] = self.map_iteration(std_input)
-
-        if self.system_type == "MS":
-            std_input[1] = self.map_iteration(std_input)
-            std_input[6] = self.noise_generation(std_input)
-            std_input[1] = self.maruyama(std_input)
-
-        if self.system_type == "CD":
-            std_input[1] = self.runge_kutta(std_input)
-
-        if self.system_type == "CS":
-            std_input[1] = self.euler(std_input)
-            std_input[6] = self.noise_generation(std_input)
-            std_input[1] = self.maruyama(std_input)
-        
-        if self.calc_LE and std_input[0] > self.t_mark:
-            std_input[7] = self.jacobian(std_input)
-
-            if self.dim == 1:
-                std_input[5] = self.lya_expo(std_input)
-            else:
-                std_input[4] = self.matrix_times(std_input)
-                std_input[5] = self.lya_spec(std_input)
-        
-        return 
+import timeit
 
 
 
 def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
+    # Initialization
     std_input = MAIN_DYNAMIC.group_gen(MAIN_PARAMETER)
     initial_val = deepcopy(std_input[1])
+    
     file_names, file_locs = 0, 0
     t_save = 0
     kase = 0
-    model = net_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE).to(MAIN_PARAMETER.device)
 
+    # Model pretreatment
+    model_cal, model_LE = 0, 0
+    print(MAIN_DYNAMIC.system_type)
+    if MAIN_DYNAMIC.system_type == "MD":
+        model_cal = networks.MD_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+    elif MAIN_DYNAMIC.system_type == "MS":
+        model_cal = networks.MS_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+    elif MAIN_DYNAMIC.system_type == "CD":
+        model_cal = networks.CD_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+    elif MAIN_DYNAMIC.system_type == "CS":
+        model_cal = networks.CS_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+
+    if LE:
+        if MAIN_DYNAMIC.dim == 1:
+            model_LE = networks.LE_1(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+        else:
+            model_LE = networks.LE_n(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+
+    # IO pretreatment
     if save:
         file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
 
+
+    # Main computation
     while 1:
+        # Time iteration
         if std_input[0] > MAIN_DYNAMIC.t_max:
             break
         
@@ -110,12 +63,18 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
         t_save += MAIN_DYNAMIC.delta_t
         kase += 1
 
-        model(std_input)
+        # Computation
+        model_cal(std_input)
 
-        if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save > MAIN_DYNAMIC.delta_t_save:
+        if LE and std_input[0] >= MAIN_DYNAMIC.t_mark:
+            model_LE(std_input)
+
+        # IO treatment
+        if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save >= MAIN_DYNAMIC.delta_t_save:
             t_save = 0
             std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
 
+    # IO after treatment
     if save:
         std_input[1] = initial_val
         std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
