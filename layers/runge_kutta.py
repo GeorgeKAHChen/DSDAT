@@ -17,22 +17,26 @@ class runge_kutta(nn.Module):
         curr_t = std_input[0]
         curr_x = std_input[1]
         dyn_para = std_input[2]
-        
-        k1 = self.f(curr_x, curr_t, dyn_para)
-        k2 = []
+        """
+        k1 = self.f(curr_x, curr_t, dyn_para).to(self.device)
         for i in range(0, len(curr_x)):
             k2.append(curr_x[i] + self.delta_t * 0.5 * k1[i]) 
-        k2 = self.f(k2, curr_t + self.delta_t * 0.5, dyn_para)
-        k3 = []
+        k2 = self.f(k2, curr_t + self.delta_t * 0.5, dyn_para).to(self.device)
         for i in range(0, len(curr_x)):
             k3.append(curr_x[i] + self.delta_t * 0.5 * k2[i]) 
-        k3 = self.f(k3, curr_t + self.delta_t * 0.5, dyn_para)
-        k4 = []
+        k3 = self.f(k3, curr_t + self.delta_t * 0.5, dyn_para).to(self.device)
         for i in range(0, len(curr_x)):
             k4.append(curr_x[i] + self.delta_t * k2[i]) 
-        k4 = self.f(k4, curr_t + self.delta_t, dyn_para)
-        for i in range(0, len(curr_x)):
-            curr_x[i] = (curr_x[i] + self.delta_t * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]) * (1/6))
+        k4 = self.f(k4, curr_t + self.delta_t, dyn_para).to(self.device)
+        """
+        k1 = self.f(curr_x, curr_t, dyn_para).to(self.device)
+        k2 = curr_x + self.delta_t * 0.5 * k1
+        k2 = self.f(k2, curr_t + self.delta_t * 0.5, dyn_para).to(self.device)
+        k3 = curr_x + self.delta_t * 0.5 * k2
+        k3 = self.f(k3, curr_t + self.delta_t * 0.5, dyn_para).to(self.device)
+        k4 = curr_x + self.delta_t * k2
+        k4 = self.f(k4, curr_t + self.delta_t, dyn_para).to(self.device)
+        curr_x = (curr_x + self.delta_t * (k1 + 2 * k2 + 2 * k3 + k4) * (1/6))
         return curr_x
 
     def extra_repr(self):
