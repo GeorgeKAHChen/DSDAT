@@ -1,6 +1,7 @@
 """=========================================
     
     data_generation.py
+    
 ========================================="""
 
 import torch
@@ -71,6 +72,8 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
 
     # Main computation
     if LE:
+        start = timeit.default_timer()
+        
         while 1:
             if std_input[0] >= MAIN_DYNAMIC.t_mark:
                 break
@@ -80,6 +83,9 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
             if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save >= MAIN_DYNAMIC.delta_t_save:
                 t_save = 0
                 std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
+        
+        stop = timeit.default_timer()
+        print('Time: ', stop - start)
         
         while 1:
             if std_input[0] >= MAIN_DYNAMIC.t_max:

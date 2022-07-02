@@ -21,9 +21,9 @@ class jacobian(nn.Module):
         output = self.Jf(curr_x, self.delta_t, dyn_para)
         for i in range(0, len(output)):
             try:
-                len(output[i])
+                output[i] = output[i].to(self.device)
             except:
-                output[i] = torch.DoubleTensor([output[i] for n in range(len(curr_x[0]))])
+                output[i] = torch.DoubleTensor([output[i] for n in range(len(curr_x[0]))]).to(self.device)
         return torch.cat(output).resize_(self.dim*self.dim, len(curr_x[0])).to(self.device)
 
     def extra_repr(self):
