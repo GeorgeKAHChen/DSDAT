@@ -7,16 +7,19 @@ import torch
 import torch.nn as nn
 
 class runge_kutta(nn.Module):
-    def __init__(self, delta_t, f, device = "cuda"):
+    def __init__(self, delta_t, f, dim, device = "cuda"):
         super(runge_kutta, self).__init__()
         self.delta_t = delta_t
         self.f = f
         self.device = device
-        
+        self.dim = dim
+
     def forward(self, std_input):
         curr_t = std_input[0]
         curr_x = std_input[1]
         dyn_para = std_input[2]
+
+        tensor_size = len(curr_x[0])
         """
         k1 = self.f(curr_x, curr_t, dyn_para).to(self.device)
         for i in range(0, len(curr_x)):
@@ -29,13 +32,17 @@ class runge_kutta(nn.Module):
             k4.append(curr_x[i] + self.delta_t * k2[i]) 
         k4 = self.f(k4, curr_t + self.delta_t, dyn_para).to(self.device)
         """
-        k1 = self.f(curr_x, curr_t, dyn_para).to(self.device)
+        k1 = torch.cat(self.f(curr_x, curr_t, dyn_para))
+        k1.resize_(self.dim, tensor_size)
         k2 = curr_x + self.delta_t * 0.5 * k1
-        k2 = self.f(k2, curr_t + self.delta_t * 0.5, dyn_para).to(self.device)
+        k2 = torch.cat(self.f(k2, curr_t + self.delta_t * 0.5, dyn_para))
+        k2.resize_(self.dim, tensor_size)
         k3 = curr_x + self.delta_t * 0.5 * k2
-        k3 = self.f(k3, curr_t + self.delta_t * 0.5, dyn_para).to(self.device)
+        k3 = torch.cat(self.f(k3, curr_t + self.delta_t * 0.5, dyn_para))
+        k3.resize_(self.dim, tensor_size)
         k4 = curr_x + self.delta_t * k2
-        k4 = self.f(k4, curr_t + self.delta_t, dyn_para).to(self.device)
+        k4 = torch.cat(self.f(k4, curr_t + self.delta_t, dyn_para))
+        k4.resize_(self.dim, tensor_size)
         curr_x = (curr_x + self.delta_t * (k1 + 2 * k2 + 2 * k3 + k4) * (1/6))
         return curr_x
 

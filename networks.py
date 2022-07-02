@@ -49,7 +49,7 @@ class MS_calc(nn.Module):
 class CD_calc(nn.Module):
     def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC):
         super(CD_calc, self).__init__()
-        self.runge_kutta = runge_kutta.runge_kutta(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_PARAMETER.device)
+        self.runge_kutta = runge_kutta.runge_kutta(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.f, MAIN_DYNAMIC.dim,MAIN_PARAMETER.device)
         
     def forward(self, std_input):
         std_input[1] = self.runge_kutta(std_input)
