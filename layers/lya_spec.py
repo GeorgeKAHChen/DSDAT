@@ -17,7 +17,6 @@ class lya_spec(nn.Module):
         curr_t = std_input[0]
         eye = std_input[4]
         LE = std_input[5]
-
         mat_result = deepcopy(eye)
         """gram_schmidt"""
         for kase in range(0, self.dim):
@@ -30,19 +29,16 @@ class lya_spec(nn.Module):
                 for j in range(0, self.dim):
                     eye[kase + j*self.dim] -= (inner_ab/inner_beta) * eye[i+j*self.dim]
 
-
         """Normalization"""
         new_spec = [0 for n in range(self.dim)]
         for i in range(0, self.dim):
             for j in range(0, self.dim):
-                new_spec[i] += eye[i + self.dim*j] * eye[i + self.dim*j]
-            new_spec[i] = torch.sqrt(new_spec[i])
+                new_spec[i] += torch.pow(eye[i + self.dim*j], 2)
+            new_spec[i] = torch.sqrt(new_spec[i])            
             for j in range(0, self.dim):
                 eye[i + self.dim*j] /= new_spec[i]
-
         for i in range(0, len(LE)):
-            LE[i] = (curr_t * LE[i] + self.delta_t * torch.log(new_spec[i])) / (curr_t + self.delta_t)
-        #print(LE[0][0], LE[1][0], LE[2][0])
+            LE[i] = (curr_t / (curr_t + self.delta_t)) * LE[i] + (self.delta_t / (curr_t + self.delta_t)) * torch.log(new_spec[i])
         return LE
 
     def extra_repr(self):
@@ -50,3 +46,4 @@ class lya_spec(nn.Module):
         return 'in_features={}, out_features={}'.format(
             0, 0
         )
+

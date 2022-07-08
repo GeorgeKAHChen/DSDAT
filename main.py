@@ -103,7 +103,7 @@ def main():
             operation.append(check_register(["0", "1"]))
         else:
             operation.append(check_register(["0", "1"], sys.argv[2]))
-        
+
         # Main processing 
         if operation[1] == "0": 
             data_merge.data_merge(MAIN_PARAMETER = MAIN_PARAMETER, 

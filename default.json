@@ -1,5 +1,5 @@
 {
-    "dyn": "model.SERS",
+    "dyn": "model.Lorenz",
 
     "delta_t": 1e-2, 
     "delta_t_save": -1,
@@ -8,9 +8,11 @@
     "t_save": 990, 
 
     "default_data_folder": "local_output",
-    "read_folder": "output/tmp_data",
+    "read_folder": "output/Lorenz",
     "image_data_file": "",
-    
+    "bfpara":[1000, -10, 10],
     "save_image_local": 1,
     "device": "cpu"
+
+
 }

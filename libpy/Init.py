@@ -642,7 +642,6 @@ def read_json(filename = "", input_string = ""):
                 continue
             else:
                 str_json += input_string[i]
-
     return json.loads(str_json)
 
 

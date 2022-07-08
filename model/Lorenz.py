@@ -16,8 +16,8 @@ para_change_loc = 4
 system_para = []
 #                   x0   y0   z0   sigma   rho       beta
 system_para_min = [0.1, 0.1, 0.1,  10.0,  1.0,   8.0/3.0]
-system_para_max = [0.1, 0.1, 0.1,  10.0,  30.0,   8.0/3.0]
-system_group    = [  1,   1,   1,     1,  10,         1]
+system_para_max = [0.1, 0.1, 0.1,  10.0,  28.0,   8.0/3.0]
+system_group    = [  1,   1,   1,     1,  28,         1]
 
 axis_name = ["x", "y", "z", "sigma", "rho", "beta"]
 

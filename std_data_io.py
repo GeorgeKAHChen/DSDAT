@@ -184,8 +184,36 @@ def std_data_input_json(MAIN_PARAMETER, json_file_loc):
 
 
 
+def std_data_input_data(MAIN_DYNAMIC, json_loc, std_input):
+    import os
+    import sys
 
+    kase = len(json_loc)
+    for kase in range(len(json_loc) - 1, -1, -1):
+        if json_loc[kase] == "\\" or json_loc[kase] == "/":
+            break
+    data_loc = json_loc[0: kase]
+    data_loc = os.path.join(data_loc, MAIN_DYNAMIC.data_file_name)
 
+    file = open(data_loc, "r")
+    std_input[2] = []
+    while 1:
+        file_line = file.readline()
+        if not file_line:
+            break
+        file_line = file_line.split(" ")
+
+        for i in range(0, len(std_input[1])):
+            try:
+                std_input[1][i].append(float(file_line[i]))
+            except:
+                print("Data file broken!")
+                sys.exit()
+
+    #for i in range(0, len(std_input[1])):
+    #    print(std_input[1][i])
+    #print(std_input[2])
+    
 
 
 

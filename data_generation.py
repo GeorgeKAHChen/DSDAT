@@ -94,6 +94,7 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
             t_save += MAIN_DYNAMIC.delta_t
             model_cal(std_input)
             model_LE(std_input)
+            #print(std_input[5][0][len(std_input[5][0]) - 1], std_input[5][1][len(std_input[5][0]) - 1], std_input[5][2][len(std_input[5][0]) - 1])
             if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save >= MAIN_DYNAMIC.delta_t_save:
                 t_save = 0
                 std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)

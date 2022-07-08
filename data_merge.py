@@ -7,6 +7,7 @@
 
 from copy import deepcopy
 import os
+import sys
 
 import std_data_io
 from libpy import Init
@@ -14,8 +15,12 @@ from libpy import Init
 def data_merge(MAIN_PARAMETER, data_type):
     folder = MAIN_PARAMETER.read_folder
     file_locs, file_names = Init.GetSufixFile(folder, "json")
+    if len(file_locs) == 0:
+        print("No data file found in 'read_folder'")
+        sys.exit()
     save_name, save_locs = [], []
     NEW_DYNAMIC = 0
+    std_input = 0
 
     for kase in range(0, len(file_locs)):
         MAIN_DYNAMIC, std_input = std_data_io.std_data_input_json(MAIN_PARAMETER, file_locs[kase])
