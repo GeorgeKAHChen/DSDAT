@@ -29,6 +29,11 @@ def bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC, para, vals, vals_name):
     diss_para = (maxx_para - minn_para) / group_para
     diss_para = (maxx_para - minn_para + diss_para/10) / group_para
 
+    print("parameter")
+    print(minn_para, maxx_para, group_para, diss_para)
+    print("y")
+    print(minn_y, maxx_y, group_y, diss_y)
+
     figure_axis = [MAIN_DYNAMIC.axis_name[0], vals_name]
 
     img = [[255 for n in range(group_para+1)] for n in range(group_y+1)]
@@ -41,14 +46,12 @@ def bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC, para, vals, vals_name):
         if loc_y < 0 or loc_y >= group_y:
             continue
         else:
-            print(loc_y, loc_para)
-            img[loc_y][loc_para] = 0
+            img[group_y - loc_y][loc_para] = 0
 
     img = np.float32(img)
     img = Image.fromarray(img.astype('uint8'), 'L')
-    img = np.asarray(img)
-    """
-    save_path = os.path.join(os.getcwd(), ".tmp")
+
+    save_path = os.path.join(os.getcwd(), "local_output")
     if not os.path.exists(save_path):
         os.mkdir(save_path)
     save_path = os.path.join(save_path, "tmp.png")
@@ -56,9 +59,13 @@ def bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC, para, vals, vals_name):
         os.remove(save_path)
 
     img.save(save_path)
-    """
-    plt.imshow(img, extent = img_loc, cmap='gray')
-    plt.show()
 
-    input("Press enter to continue")
+    img = np.asarray(img)
+    plt.figure(figsize=(20, 6))
+    plt.imshow(img, extent = img_loc, cmap='gray')
+    plt.xlabel(figure_axis[0])
+    plt.ylabel(figure_axis[1])
+    #plt.imsave(img, "tmp.png", cmap='gray')
+    plt.show()
+    #input("Press enter to continue")
     return 

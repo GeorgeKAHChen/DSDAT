@@ -15,9 +15,9 @@ para_change_loc = 4
 
 system_para = []
 #                   x_0, y_0,  z_0    a    b    c
-system_para_min = [-1.0, 0.0, -1.0, 0.2, 0.1, 5.7]
+system_para_min = [-1.0, 0.0, -1.0, 0.2, 0.2, 5.7]
 system_para_max = [-1.0, 0.0, -1.0, 0.2, 2, 5.7]
-system_group    = [   1,   1,    1,   1, 50,   1]
+system_group    = [   1,   1,    1,   1, 10,   1]
 
 axis_name = ["x", "y", "z", "a", "b", "c"]
 

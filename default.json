@@ -1,16 +1,21 @@
 {
-    "dyn": "model.Lorenz",
+    "dyn": "model.ERS",
 
     "delta_t": 1e-2, 
     "delta_t_save": -1,
-    "t_max":  1000, 
-    "t_mark": 900, 
-    "t_save": 990, 
+    "t_max":  100000, 
+    "t_mark": 90000, 
+    "t_save": 99900, 
+    
+    //For map 
+    //"t_max":  10000000, 
+    //"t_mark": 9000000, 
+    //"t_save": 9900000,
 
     "default_data_folder": "local_output",
     "read_folder": "output/Lorenz",
     "image_data_file": "",
-    "bfpara":[1000, -10, 10],
+    "bfpara":[1000, 0, 1],
     "save_image_local": 1,
     "device": "cpu"
 
