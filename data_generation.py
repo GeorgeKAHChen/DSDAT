@@ -115,6 +115,8 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
         std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
     
     if LE:
+        #for i in range(0, len(std_input[5])):
+        #    std_input[5] /= MAIN_DYNAMIC.delta_t
         MAIN_DYNAMIC.data_type = "LE"
         file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
         std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)

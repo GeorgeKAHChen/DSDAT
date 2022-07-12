@@ -9,26 +9,14 @@ import os
 import torch
 
 from libpy import Init
+from libpy import check_register
 import initialization
 import data_generation
 import data_merge
 import image_generation
+import tools
 
-def check_register(registers, str_input = ""):
-    while 1:
-        if len(str_input) == 0:
-            val = input("Please input the flag: ")
-        else:
-            val = str_input
-        for i in range(0, len(registers)):
-            if val == registers[i]:
-                return val
-        if len(str_input) == 0:
-            print("Input flag error, please input correct flag")
-            continue
-        else:
-            print("ERROR: Input flag error, please check the readme files")
-            sys.exit()
+
 
 
 
@@ -44,10 +32,11 @@ def main():
         print("0. Data Generator")
         print("1. Data Merge")
         print("2. Image Plot")
-        operation.append(check_register(["0", "1", "2"]))
+        print("3. Other Tools")
+        operation.append(check_register.check_register(["0", "1", "2", "3"]))
 
     else:
-        operation.append(check_register(["0", "1", "2"], sys.argv[1]))
+        operation.append(check_register.check_register(["0", "1", "2", "3"], sys.argv[1]))
 
 
     if operation[0] == "0":
@@ -60,10 +49,10 @@ def main():
             print("01. Just Save orbit")
             print("10. Just Save LE")
             print("11. Save both LE and orbit")
-            operation.append(check_register(["01", "10", "11"]))
+            operation.append(check_register.check_register(["01", "10", "11"]))
 
         else:
-            operation.append(check_register(["01", "10", "11"], sys.argv[2]))
+            operation.append(check_register.check_register(["01", "10", "11"], sys.argv[2]))
         
         # initialization 
         MAIN_DYNAMIC = initialization.system_parameter()
@@ -100,9 +89,9 @@ def main():
         if len(sys.argv) <= 2:
             print("0. Merge LE")
             print("1. Merge Data")
-            operation.append(check_register(["0", "1"]))
+            operation.append(check_register.check_register(["0", "1"]))
         else:
-            operation.append(check_register(["0", "1"], sys.argv[2]))
+            operation.append(check_register.check_register(["0", "1"], sys.argv[2]))
 
         # Main processing 
         if operation[1] == "0": 
@@ -114,6 +103,9 @@ def main():
 
     if operation[0] == "2":
         image_generation.image_generation(MAIN_PARAMETER)
+
+    if operation[0] == "3":
+        tools.main(MAIN_PARAMETER)
 
     return 
 

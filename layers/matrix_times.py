@@ -21,7 +21,6 @@ class matrix_times(nn.Module):
                 mat_result[i * self.dim + j] = 0;
                 for k in range(0, self.dim):
                     mat_result[i * self.dim + j] += jacobian[i * self.dim + k] * eye[j + k * self.dim];
-        
         return mat_result
 
     def extra_repr(self):

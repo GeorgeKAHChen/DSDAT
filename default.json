@@ -1,11 +1,11 @@
 {
-    "dyn": "model.ERS",
+    "dyn": "model.Rossler",
 
-    "delta_t": 1e-2, 
+    "delta_t": 1e-3, 
     "delta_t_save": -1,
-    "t_max":  100000, 
-    "t_mark": 90000, 
-    "t_save": 99900, 
+    "t_max":  10000, 
+    "t_mark": 9000, 
+    "t_save": 9900, 
     
     //For map 
     //"t_max":  10000000, 

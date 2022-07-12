@@ -5,13 +5,24 @@
 ========================================="""
 
 import os
-import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
+from copy import deepcopy
+import json
 
 epsilon = 1e-5
 
+BDIMG_JSON = {
+    "data_type": "BDIMG",
+    "data_file_name": "",
+    "image_name": "",
+    "para": [],
+    "axis_name": [],
+}
+
+
 def bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC, para, vals, vals_name):
+    # Initialization group axis data
     group_y, minn_y, maxx_y = 0, 0, 0
     if len(MAIN_PARAMETER.bfpara) == 3:
         group_y, minn_y, maxx_y = MAIN_PARAMETER.bfpara[0], MAIN_PARAMETER.bfpara[1], MAIN_PARAMETER.bfpara[2]
@@ -29,16 +40,16 @@ def bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC, para, vals, vals_name):
     diss_para = (maxx_para - minn_para) / group_para
     diss_para = (maxx_para - minn_para + diss_para/10) / group_para
 
-    print("parameter")
-    print(minn_para, maxx_para, group_para, diss_para)
-    print("y")
-    print(minn_y, maxx_y, group_y, diss_y)
+    axis_name = [MAIN_DYNAMIC.axis_name[0], vals_name]
+    save_path = os.path.join(os.getcwd(), MAIN_PARAMETER.default_data_folder)
+    if not os.path.exists(save_path):
+        os.mkdir(save_path)
 
-    figure_axis = [MAIN_DYNAMIC.axis_name[0], vals_name]
 
+
+    # Image generator and save
     img = [[255 for n in range(group_para+1)] for n in range(group_y+1)]
     img_loc = [minn_y - epsilon, maxx_y + epsilon, minn_para, maxx_para]
-
     for i in range(0, len(para)):
         loc_para = int((para[i] - minn_para + diss_para/10)/diss_para)
         loc_y = int((vals[i] - minn_y + diss_y / 10)/diss_y)
@@ -50,22 +61,24 @@ def bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC, para, vals, vals_name):
 
     img = np.float32(img)
     img = Image.fromarray(img.astype('uint8'), 'L')
+    img_path = os.path.join(save_path, MAIN_DYNAMIC.system_name + ".png")
+    img.save(img_path)
+    print("Image saved: " + save_path)
 
-    save_path = os.path.join(os.getcwd(), "local_output")
-    if not os.path.exists(save_path):
-        os.mkdir(save_path)
-    save_path = os.path.join(save_path, "tmp.png")
-    if os.path.exists(save_path):
-        os.remove(save_path)
 
-    img.save(save_path)
 
-    img = np.asarray(img)
-    plt.figure(figsize=(20, 6))
-    plt.imshow(img, extent = img_loc, cmap='gray')
-    plt.xlabel(figure_axis[0])
-    plt.ylabel(figure_axis[1])
-    #plt.imsave(img, "tmp.png", cmap='gray')
-    plt.show()
-    #input("Press enter to continue")
+    # json file generator
+    BDIMG_JSON["data_file_name"] = MAIN_DYNAMIC.system_name + ".png"
+    BDIMG_JSON["image_name"] = "Bifucation Diagram: " + MAIN_DYNAMIC.system_name + ", " + axis_name[0] + " in " + str((minn_para, maxx_para))
+    BDIMG_JSON["para"] = img_loc
+    BDIMG_JSON["axis_name"] = axis_name
+    
+    json_path = os.path.join(save_path, MAIN_DYNAMIC.system_name + ".json")
+    new_json = str(json.dumps(BDIMG_JSON)+"\n")
+
+    file = open(json_path, "w")
+    file.write(new_json)
+    file.close()
+    print("Axis info saved: " + json_path)
+
     return 

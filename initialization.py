@@ -85,8 +85,12 @@ class system_parameter():
     def read_from_json(self, filename):
         from libpy.Init import read_json
         import os
+        import sys 
         print(filename)
         json_file = read_json(filename)
+        if json_file['data_type'] == "BDIMG":
+            print("File input error, this json is data for bifucation diagram plot.")
+            sys.exit()
         for kase in self.input_keys:
             setattr(self, kase, json_file[kase])
         for kase in self.time_keys:
