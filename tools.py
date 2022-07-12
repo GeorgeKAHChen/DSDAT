@@ -63,10 +63,10 @@ def bifucation_add_axis(MAIN_PARAMETER):
     
     fig = plt.figure(figsize=(18, 6))
     ax = fig.add_subplot(111)
-    ax.imshow(img, extent = img_json['para'], cmap='gray')
+    ax.imshow(img, extent = [img_json['para'][2], img_json['para'][3], img_json['para'][0], img_json['para'][1]], cmap='gray')
     ax.set_xlabel(img_json['axis_name'][0])
     ax.set_ylabel(img_json['axis_name'][1])
-    ax.set_aspect(0.1)
+    ax.set_aspect(aspect_para)
     plt.show()
 
     return 

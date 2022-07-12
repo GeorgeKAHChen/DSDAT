@@ -51,11 +51,11 @@ def bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC, para, vals, vals_name):
     img = [[255 for n in range(group_para+1)] for n in range(group_y+1)]
     img_loc = [minn_y - epsilon, maxx_y + epsilon, minn_para, maxx_para]
     for i in range(0, len(para)):
-        if vals[i] == "nan" or vals[i] == "-nan":
+        try:
+            loc_para = int((para[i] - minn_para + diss_para/10)/diss_para)
+            loc_y = int((vals[i] - minn_y + diss_y / 10)/diss_y)
+        except:
             continue
-        loc_para = int((para[i] - minn_para + diss_para/10)/diss_para)
-        loc_y = int((vals[i] - minn_y + diss_y / 10)/diss_y)
-
         if loc_y < 0 or loc_y >= group_y:
             continue
         else:
