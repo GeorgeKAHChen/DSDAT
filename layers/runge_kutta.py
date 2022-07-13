@@ -7,21 +7,41 @@ import torch
 import torch.nn as nn
 
 class runge_kutta(nn.Module):
-    def __init__(self, delta_t, f, dim, device = "cuda"):
+    def __init__(self, delta_t, f, dim, tensor_size, device = "cuda"):
         super(runge_kutta, self).__init__()
         self.delta_t = delta_t
         self.f = f
         self.device = device
         self.dim = dim
+        self.tensor_size = tensor_size
+
 
     def forward(self, std_input):
         curr_t = std_input[0]
         curr_x = std_input[1]
         dyn_para = std_input[2]
+        return curr_x + self.delta_t * torch.cat(self.f(curr_x, curr_t, dyn_para)).resize_(self.dim, self.tensor_size).to(self.device)
+
+
+        
         #print("curr_t, curr_x")
         #print(curr_t)
         #print(curr_x)
-        tensor_size = len(curr_x[0])
+        
+        '''
+        print(self.f(curr_x, curr_t, dyn_para))
+        input("1")
+        #print(self.delta_t * self.f(curr_x, curr_t, dyn_para))
+        #input("2")
+        print(self.delta_t * torch.cat(self.f(curr_x, curr_t, dyn_para)))
+        input("3")
+        print(torch.cat(self.f(curr_x, curr_t, dyn_para)).resize_(self.dim, self.tensor_size).to(self.device))
+        input("4")
+        print(curr_x + self.delta_t * torch.cat(self.f(curr_x, curr_t, dyn_para)).resize_(self.dim, self.tensor_size).to(self.device))
+        '''
+
+        """
+        
         k1 = torch.cat(self.f(curr_x, curr_t, dyn_para)).resize_(self.dim, tensor_size).to(self.device)
         #print("k1")
         #print(k1)
@@ -43,6 +63,7 @@ class runge_kutta(nn.Module):
         #print("new_x")
         #print(curr_x)
         #input()
+        """
         return curr_x
 
     def extra_repr(self):

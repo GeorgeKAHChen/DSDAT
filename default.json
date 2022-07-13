@@ -1,7 +1,7 @@
 {
     "dyn": "model.Lorenz",
 
-    "delta_t": 1e-2, 
+    "delta_t": 1e-3, 
     "delta_t_save": -1,
     "t_max":  10000, 
     "t_mark": 9000, 
