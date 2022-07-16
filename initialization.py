@@ -40,7 +40,7 @@ STD_JSON = {
 class main_parameters():
     def __init__(self):
         #super(init, self).__init__()
-        self.keys = ["dyn", "default_data_folder", "read_folder", "image_data_file", "save_image_local", "device", "bfpara"]
+        self.keys = ["dyn", "default_data_folder", "read_folder", "image_data_file", "save_image_local", "device", "bfpara", "print_t"]
         for kase in self.keys:
             setattr(self, kase, 0)        
 

@@ -17,7 +17,7 @@ import timeit
 
 
 
-def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
+def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save, sec):
     if MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_mark:
         print("Computation time error, t_max >= t_mark is necessary")
         sys.exit()
@@ -37,6 +37,14 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
     print("/*----------------------------------------------*/")
     print("t_mark, t_max, delta_t, t_save, delta_t_save = " + str(MAIN_DYNAMIC.t_mark) + ", " + str(MAIN_DYNAMIC.t_max) + ", " + str(MAIN_DYNAMIC.delta_t) + ", " + str(MAIN_DYNAMIC.t_save) + ", " + str(MAIN_DYNAMIC.delta_t_save))
     print("/*----------------------------------------------*/")
+    print("Save: ", end = "")
+    if save:
+        print("orbit", end = ", ")
+    if LE:
+        print("LE", end = ", ")
+    if sec:
+        print("sec", end = ", ")
+    print()        
     print()
     print()
 
@@ -65,49 +73,43 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save):
         else:
             model_LE = networks.LE_n(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
 
+    if sec:
+        model_sec = networks.section(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+
     # IO pretreatment
     if save:
         file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
 
 
     # Main computation
-    if LE:
-        start = timeit.default_timer()
-        
-        while 1:
-            if std_input[0] >= MAIN_DYNAMIC.t_mark:
-                break
-            std_input[0] += MAIN_DYNAMIC.delta_t
-            t_save += MAIN_DYNAMIC.delta_t
-            model_cal(std_input)
-            if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save >= MAIN_DYNAMIC.delta_t_save:
-                t_save = 0
-                std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
-        
-        stop = timeit.default_timer()
-        print('Time: ', stop - start)
-        
-        while 1:
-            if std_input[0] >= MAIN_DYNAMIC.t_max:
-                break
-            std_input[0] += MAIN_DYNAMIC.delta_t
-            t_save += MAIN_DYNAMIC.delta_t
-            model_cal(std_input)
-            model_LE(std_input)
-            #print(std_input[5][0][len(std_input[5][0]) - 1], std_input[5][1][len(std_input[5][0]) - 1], std_input[5][2][len(std_input[5][0]) - 1])
-            if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save >= MAIN_DYNAMIC.delta_t_save:
-                t_save = 0
-                std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
-    else:
-        while 1:
-            if std_input[0] > MAIN_DYNAMIC.t_max:
-                break
-            std_input[0] += MAIN_DYNAMIC.delta_t
-            t_save += MAIN_DYNAMIC.delta_t
-            model_cal(std_input)
-            if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save >= MAIN_DYNAMIC.delta_t_save:
-                t_save = 0
-                std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
+    start = timeit.default_timer()
+    kase = 0
+    while 1:
+        if std_input[0] >= MAIN_DYNAMIC.t_max:
+            break
+        std_input[0] += MAIN_DYNAMIC.delta_t
+        t_save += MAIN_DYNAMIC.delta_t
+        kase += 1
+
+        if kase >= MAIN_PARAMETER.print_t:
+            print(kase, std_input[0], MAIN_DYNAMIC.t_max)
+            kase = 0
+
+        # main computation
+        model_cal(std_input)
+
+        if std_input[0] >= MAIN_DYNAMIC.t_mark:
+            if LE:
+                model_LE(std_input)
+            """
+            if sec:
+                model_sec(std_input)
+            """
+        if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save >= MAIN_DYNAMIC.delta_t_save:
+            t_save = 0
+            std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
+    stop = timeit.default_timer()
+    print('Time: ', stop - start)
 
     # IO after treatment
     if save:

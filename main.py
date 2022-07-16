@@ -21,6 +21,7 @@ import tools
 
 
 def main():
+    
     MAIN_PARAMETER = initialization.main_parameters()
     MAIN_PARAMETER.initialization()
 
@@ -45,14 +46,53 @@ def main():
         """
 
         # input flag
+        flags = []
+        flag_arr = ["-o", "-le", "-p"]
         if len(sys.argv) <= 2:
-            print("01. Just Save orbit")
-            print("10. Just Save LE")
-            print("11. Save both LE and orbit")
-            operation.append(check_register.check_register(["01", "10", "11"]))
+            while 1:
+                print("-o: calculate and save orbit")
+                print("-le: save Lyapunov exponent(Lyapunov Spectrum)")
+                print("-p: calculate and save poincare section")
+                
+                string = input("Please input flags:  ")
+                string = string.split(' ')
+                print(string)
+                error = 1
+                for i in range(0, len(string)):
+                    for j in range(0, len(flag_arr)):
+                        if string[i] == flag_arr[j]:
+                            flags.append(string[i])
+                            error = 0
+                            break
+                    if error:
+                        print("flag: " + string[i] + " now exists. Ignored")
+
+                if len(flags) == 0:
+                    print("Input error, you should input at least one effected flag")
+                    continue
+                else:
+                    break
 
         else:
-            operation.append(check_register.check_register(["01", "10", "11"], sys.argv[2]))
+            for i in range(2, len(sys.argv)):
+                for j in range(0, len(flag_arr)):
+                    if sys.argv[i] == flag_arr[j]:
+                        flags.append(sys.argv[i])
+            if len(flags) == 0:
+                print("Input error, you should input at least one effected flag")
+                sys.exit()
+        print(flags)
+        LE = 0
+        save = 0 
+        sec = 0        
+        for i in range(0, len(flags)):
+            if flags[i] == "-o":
+                save = 1
+            if flags[i] == "-le":
+                LE = 1
+            if flags[i] == "-p":
+                sec = 1
+
         
         # initialization 
         MAIN_DYNAMIC = initialization.system_parameter()
@@ -63,23 +103,13 @@ def main():
                                     data_file_name = data_file_name,
                                     dyn = MAIN_PARAMETER.dyn)
 
-        # main computation
-        if operation[1] == "01":
-            data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
-                                      MAIN_DYNAMIC = MAIN_DYNAMIC,
-                                      LE = 0, 
-                                      save = 1)
-        elif operation[1] == "10":
-            data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
-                                      MAIN_DYNAMIC = MAIN_DYNAMIC,
-                                      LE = 1, 
-                                      save = 0)
-        else:
-            data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
-                                      MAIN_DYNAMIC = MAIN_DYNAMIC,
-                                      LE = 1, 
-                                      save = 1)
-
+        
+        data_generation.data_generation(MAIN_PARAMETER = MAIN_PARAMETER, 
+                                  MAIN_DYNAMIC = MAIN_DYNAMIC,
+                                  LE = LE, 
+                                  save = save,
+                                  sec = sec)
+        
     if operation[0] == "1":
         """
         For data generation

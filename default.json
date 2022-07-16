@@ -7,13 +7,14 @@
     "t_mark": 9000, 
     "t_save": 9900, 
     
+    "print_t": 1000000,
     //For map 
     //"t_max":  10000000, 
     //"t_mark": 9000000, 
     //"t_save": 9900000,
 
     "default_data_folder": "local_output",
-    "read_folder": "output/Lorenz",
+    "read_folder": "local_output/Lorenz",
     "image_data_file": "",
     "bfpara":[1000, 0, 1],
     "save_image_local": 1,

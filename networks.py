@@ -94,3 +94,22 @@ class LE_n(nn.Module):
         std_input[5] = self.lya_spec(std_input)
 
 
+class section(nn.Module):
+    def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC):
+        super(section, self).__init__()
+        self.section_pm = MAIN_DYNAMIC.section()
+        self.last_x = 0
+
+    def forward(self, std_input):
+        return 
+
+
+
+
+
+
+
+
+
+
+

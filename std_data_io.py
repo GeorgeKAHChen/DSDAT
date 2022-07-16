@@ -218,7 +218,18 @@ def std_data_input_data(MAIN_DYNAMIC, json_loc, std_input):
 
 
 
-
+def arr_output_direct(arr, loc):
+    file = open(loc, "w")
+    string = ""
+    for i in range(0, len(arr)):
+        for j in range(0, len(arr[i])):
+            string += str(arr[i][j])
+            if not j + 1 == len(arr[i]):
+                string += " "
+        string += "\n"
+    file.write(string)
+    file.close()
+    return 
 
 
 
