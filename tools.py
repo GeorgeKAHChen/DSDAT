@@ -10,7 +10,6 @@ import sys
 import shutil
 
 from libpy import Init
-from libpy import check_register
 
 import std_data_io
 import initialization
@@ -159,19 +158,10 @@ def local_maxinum(MAIN_PARAMETER):
 
 
 
-def main(MAIN_PARAMETER):
-    operation_list = ["1", "2"]
-    if len(sys.argv) <= 2:
-        print("Tool list")
-        print("1. Add axis of bifucation diagram")
-        print("2. Data reduce(find local maxinum)")
-        operation = check_register.check_register(operation_list)
-    else:
-        operation = check_register.check_register(operation_list, sys.argv[2])
-
-    if operation == "1":
+def main(MAIN_PARAMETER, operations):
+    if operations[1] == "-bf":
         bifucation_add_axis(MAIN_PARAMETER)
 
-    if operation == "2":
+    if operations[1] == "-lm":
         local_maxinum(MAIN_PARAMETER)
 

@@ -1,11 +1,13 @@
 {
     "dyn": "model.Lorenz",
 
-    "delta_t": 1e-3, 
-    "delta_t_save": -1,
     "t_max":  10000, 
-    "t_mark": 9000, 
-    "t_save": 9900, 
+    "delta_t": 1e-3, 
+    "delta_t_ob": -1,
+    "t_ob": 9900,
+    "t_le": 9000,
+    "t_lm": 9900,
+    "t_ps": 9900,
     
     "print_t": 1000000,
     //For map 

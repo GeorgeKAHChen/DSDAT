@@ -10,11 +10,14 @@ STD_JSON = {
     "data_file_name": "",
     "system_name": "",
 
-    "t_mark": 0,
     "t_max": 0,
-    "t_save": 0,
     "delta_t": 0,
-    "delta_t_save": 0,
+    "delta_t_ob": 0,
+    "t_le": 0,
+    "t_ob": 0,
+    "t_ps": 0,
+    "t_lm": 0,
+    
 
     "dim": 0,
     "para": 0,
@@ -59,7 +62,7 @@ class system_parameter():
     def __init__(self):
         self.input_keys = ["data_type", "data_file_name"]
             # depend on computation
-        self.time_keys = ["t_mark", "t_max", "delta_t", "delta_t_save", "t_save"]
+        self.time_keys = ["t_max", "delta_t", "delta_t_ob", "t_le", "t_ob", "t_ps", "t_lm"]
             # read from default.json
         self.system_keys = ["system_type", "system_name", "dim", "para", "rand", "rand_para", "para_change_loc", "system_para", "system_para_min", "system_para_max", "system_group", "axis_name"]
             # read from model.py

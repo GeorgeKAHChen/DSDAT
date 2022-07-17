@@ -17,11 +17,24 @@ import timeit
 
 
 
-def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save, sec):
-    if MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_mark:
-        print("Computation time error, t_max >= t_mark is necessary")
+def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
+    flag_le, flag_ob, flag_ps, flag_lm, val_lm = 0, 0, 0, 0, 0
+    for i in range(0, len(input_flags)):
+        if input_flags[i] == "-le":
+            flag_le = 1
+        if input_flags[i] == "-ob": 
+            flag_ob = 1
+        if input_flags[i] == "-ps":
+            flag_ps = 1
+        if input_flags[i] == "-lm":
+            flag_lm = 1
+            i += 1 
+            val_lm = input_flags[i]
+
+    if MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_le or MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_ob or MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_ps or MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_lm: 
+        print("Computation time error, t_max >= t_le/t_ob/t_ps/t_lm is necessary")
         sys.exit()
-        
+
     print()
     print()
     print("/*----------------------------------------------*/")
@@ -35,15 +48,22 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save, sec):
     print("system_para_max: " + str(MAIN_DYNAMIC.system_para_max))
     print("system_group: " + str(MAIN_DYNAMIC.system_group))
     print("/*----------------------------------------------*/")
-    print("t_mark, t_max, delta_t, t_save, delta_t_save = " + str(MAIN_DYNAMIC.t_mark) + ", " + str(MAIN_DYNAMIC.t_max) + ", " + str(MAIN_DYNAMIC.delta_t) + ", " + str(MAIN_DYNAMIC.t_save) + ", " + str(MAIN_DYNAMIC.delta_t_save))
+    times = ["t_max", "delta_t", "delta_t_ob", "t_le", "t_ob", "t_ps", "t_lm"]
+    print("t_max, delta_t, delta_t_ob, t_le, t_ob, t_ps, t_lm = ", end = "")
+    for kase in times:
+        print(eval("MAIN_DYNAMIC." + kase), end = ", ")
+    print()
     print("/*----------------------------------------------*/")
     print("Save: ", end = "")
-    if save:
-        print("orbit", end = ", ")
-    if LE:
+    if flag_le:
         print("LE", end = ", ")
-    if sec:
-        print("sec", end = ", ")
+    if flag_ob:
+        print("Orbit", end = ", ")
+    if flag_ps:
+        print("Poincare section", end = ", ")
+    if flag_lm:
+        print("Local Max", end = ", ")
+        print("Local Max Dimension = " + str(val_lm), end = ", ")
     print()        
     print()
     print()
@@ -67,19 +87,20 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save, sec):
     elif MAIN_DYNAMIC.system_type == "CS":
         model_cal = networks.CS_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
 
-    if LE:
+    if flag_le:
         if MAIN_DYNAMIC.dim == 1:
             model_LE = networks.LE_1(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
         else:
             model_LE = networks.LE_n(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
-
-    if sec:
-        model_sec = networks.section(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
-
-    # IO pretreatment
-    if save:
+    
+    if flag_ob:
         file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
 
+    if flag_ps:
+        pass
+
+    if flag_lm:
+        pass
 
     # Main computation
     start = timeit.default_timer()
@@ -97,31 +118,33 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, LE, save, sec):
 
         # main computation
         model_cal(std_input)
-
-        if std_input[0] >= MAIN_DYNAMIC.t_mark:
-            if LE:
+        if flag_le and std_input[0] >= MAIN_DYNAMIC.t_le:
                 model_LE(std_input)
-            """
-            if sec:
-                model_sec(std_input)
-            """
-        if save and std_input[0] >= MAIN_DYNAMIC.t_save and t_save >= MAIN_DYNAMIC.delta_t_save:
+        if flag_ob and std_input[0] >= MAIN_DYNAMIC.t_ob and t_save >= MAIN_DYNAMIC.delta_t_ob:
             t_save = 0
             std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
+        if flag_ps and std_input[0] >= MAIN_DYNAMIC.t_ps:
+            pass
+        if flag_lm and std_input[0] >= MAIN_DYNAMIC.t_lm:
+            pass
+
     stop = timeit.default_timer()
     print('Time: ', stop - start)
 
-    # IO after treatment
-    if save:
-        std_input[1] = initial_val
-        std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
-    
-    if LE:
-        #for i in range(0, len(std_input[5])):
-        #    std_input[5] /= MAIN_DYNAMIC.delta_t
+    if flag_le:
         MAIN_DYNAMIC.data_type = "LE"
         file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
         std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
         std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
 
-    return LE
+    if flag_ob:
+        std_input[1] = initial_val
+        std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
+    
+    if flag_ps:
+        pass
+
+    if flag_lm:
+        pass
+
+    return 
