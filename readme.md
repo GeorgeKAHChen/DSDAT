@@ -152,14 +152,15 @@ deafult.json
 #inputs data structure
 
 inputs[0] = (float) curr_t;
-inputs[1] = array[TensorDouble] curr_x;
-inputs[2] = array[TensorDouble] dyn_para;
-inputs[3] = array[TensorDouble] rand_para;
-inputs[4] = array[TensorDouble] eye Gram_S(matrix);
-inputs[5] = array[TensorDouble] LE;
-inputs[6] = array[TensorDouble] random_value;
-inputs[7] = array[TensorDouble] jacobian;
-inputs[8] = array[double]: LE_table / Value table;
+inputs[1] = array[TensorDouble] #curr_x;
+inputs[2] = array[TensorDouble] #dyn_para;
+inputs[3] = array[TensorDouble] #rand_para;
+inputs[4] = array[TensorDouble] #eye Gram_S(matrix);
+inputs[5] = array[TensorDouble] #LE;
+inputs[6] = array[TensorDouble] #random_value;
+inputs[7] = array[TensorDouble] #jacobian;
+inputs[8] = array[double]       #LE_table / Value table;
+inputs[9] = array[TensorDouble] #last_last_x, last_x, pm
 ```
 
 

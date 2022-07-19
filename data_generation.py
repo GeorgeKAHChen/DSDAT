@@ -16,25 +16,25 @@ DEBUG = 1
 import timeit
 
 
-
-def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
-    flag_le, flag_ob, flag_ps, flag_lm, val_lm = 0, 0, 0, 0, 0
-    for i in range(0, len(input_flags)):
-        if input_flags[i] == "-le":
-            flag_le = 1
-        if input_flags[i] == "-ob": 
-            flag_ob = 1
-        if input_flags[i] == "-ps":
-            flag_ps = 1
-        if input_flags[i] == "-lm":
-            flag_lm = 1
-            i += 1 
-            val_lm = input_flags[i]
-
+def dg_init(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
     if MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_le or MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_ob or MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_ps or MAIN_DYNAMIC.t_max < MAIN_DYNAMIC.t_lm: 
         print("Computation time error, t_max >= t_le/t_ob/t_ps/t_lm is necessary")
         sys.exit()
 
+    flags = {'le': 0, 'ob': 0, 'ps': 0, 'lm': 0, 'lm_para': 0}
+    
+    for i in range(0, len(input_flags)):
+        if input_flags[i] == "-le":
+            flags['le'] = 1
+        if input_flags[i] == "-ob": 
+            flags['ob'] = 1
+        if input_flags[i] == "-ps":
+            flags['ps'] = 1
+        if input_flags[i] == "-lm":
+            flags['lm'] = 1
+            i += 1 
+            flags['lm_para'] = input_flags[i]
+    
     print()
     print()
     print("/*----------------------------------------------*/")
@@ -55,55 +55,69 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
     print()
     print("/*----------------------------------------------*/")
     print("Save: ", end = "")
-    if flag_le:
+    if flags['le']:
         print("LE", end = ", ")
-    if flag_ob:
+    if flags['ob']:
         print("Orbit", end = ", ")
-    if flag_ps:
+    if flags['ps']:
         print("Poincare section", end = ", ")
-    if flag_lm:
+    if flags['lm']:
         print("Local Max", end = ", ")
-        print("Local Max Dimension = " + str(val_lm), end = ", ")
+        print("Local Max Dimension = " + str(flags['lm_para']), end = ", ")
     print()        
     print()
     print()
+
+    return flags
+
+
+
+def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
+    flags = dg_init(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags)
 
     # Initialization
     std_input = MAIN_DYNAMIC.group_gen(MAIN_PARAMETER)
     initial_val = deepcopy(std_input[1])
     
-    file_names, file_locs = 0, 0
-    t_save = 0
-
-    # Model pretreatment
-    model_cal, model_LE = 0, 0
-
-    if MAIN_DYNAMIC.system_type == "MD":
-        model_cal = networks.MD_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
-    elif MAIN_DYNAMIC.system_type == "MS":
-        model_cal = networks.MS_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
-    elif MAIN_DYNAMIC.system_type == "CD":
-        model_cal = networks.CD_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
-    elif MAIN_DYNAMIC.system_type == "CS":
-        model_cal = networks.CS_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
-
-    if flag_le:
-        if MAIN_DYNAMIC.dim == 1:
-            model_LE = networks.LE_1(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
-        else:
-            model_LE = networks.LE_n(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
     
-    if flag_ob:
+    model_std = 0
+    if MAIN_DYNAMIC.system_type == "MD":
+        model_std = networks.MD_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+    elif MAIN_DYNAMIC.system_type == "MS":
+        model_std = networks.MS_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+    elif MAIN_DYNAMIC.system_type == "CD":
+        model_std = networks.CD_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+    elif MAIN_DYNAMIC.system_type == "CS":
+        model_std = networks.CS_calc(MAIN_PARAMETER, MAIN_DYNAMIC).to(MAIN_PARAMETER.device)
+
+    model_le, LE_DYNAMIC, le_names, le_locs = 0, 0, 0, 0
+    if flags['le']:
+        LE_DYNAMIC = deepcopy(MAIN_DYNAMIC)
+        LE_DYNAMIC.data_type = "LE"
+        le_names, le_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, LE_DYNAMIC, std_input)
+        if MAIN_DYNAMIC.dim == 1:
+            model_le = networks.LE_1(MAIN_PARAMETER, LE_DYNAMIC).to(MAIN_PARAMETER.device)
+        else:
+            model_le = networks.LE_n(MAIN_PARAMETER, LE_DYNAMIC).to(MAIN_PARAMETER.device)
+    
+    file_names, file_locs = 0, 0
+    if flags['ob']:
         file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
 
-    if flag_ps:
+    if flags['ps']:
         pass
 
-    if flag_lm:
-        pass
+    model_lm, LM_DYNAMIC, lm_name, lm_locs = 0, 0, 0, 0
+    if flags['lm']:
+        LM_DYNAMIC = deepcopy(MAIN_DYNAMIC)
+        LM_DYNAMIC.data_type = "LSTD"
+        lm_name, lm_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, LM_DYNAMIC, std_input)
+        model_lm = networks.local_max(MAIN_PARAMETER, MAIN_DYNAMIC, flags['lm_para']).to(MAIN_PARAMETER.device)
+        
 
     # Main computation
     start = timeit.default_timer()
+    t_save = 0
     kase = 0
     while 1:
         if std_input[0] >= MAIN_DYNAMIC.t_max:
@@ -111,40 +125,40 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
         std_input[0] += MAIN_DYNAMIC.delta_t
         t_save += MAIN_DYNAMIC.delta_t
         kase += 1
-
         if kase >= MAIN_PARAMETER.print_t:
             print(kase, std_input[0], MAIN_DYNAMIC.t_max)
             kase = 0
 
         # main computation
-        model_cal(std_input)
-        if flag_le and std_input[0] >= MAIN_DYNAMIC.t_le:
-                model_LE(std_input)
-        if flag_ob and std_input[0] >= MAIN_DYNAMIC.t_ob and t_save >= MAIN_DYNAMIC.delta_t_ob:
+        model_std(std_input)
+        if flags['le'] and std_input[0] >= MAIN_DYNAMIC.t_le:
+            model_le(std_input)
+        if flags['ob'] and std_input[0] >= MAIN_DYNAMIC.t_ob and t_save >= MAIN_DYNAMIC.delta_t_ob:
             t_save = 0
             std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
-        if flag_ps and std_input[0] >= MAIN_DYNAMIC.t_ps:
+        if flags['ps'] and std_input[0] >= MAIN_DYNAMIC.t_ps:
             pass
-        if flag_lm and std_input[0] >= MAIN_DYNAMIC.t_lm:
-            pass
+        if flags['lm'] and std_input[0] >= MAIN_DYNAMIC.t_lm:
+            model_lm(std_input)
+            std_data_io.lm_data_output_main(MAIN_PARAMETER, LM_DYNAMIC, std_input, lm_locs)
 
     stop = timeit.default_timer()
     print('Time: ', stop - start)
 
-    if flag_le:
-        MAIN_DYNAMIC.data_type = "LE"
-        file_names, file_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input)
-        std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
-        std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
 
-    if flag_ob:
+    if flags['le']:
+        MAIN_DYNAMIC.data_type = "LE"        
+        std_data_io.std_data_output_main(MAIN_PARAMETER, LE_DYNAMIC, std_input, le_names, le_locs)
+        std_data_io.std_data_output_after(MAIN_PARAMETER, LE_DYNAMIC, std_input, le_names, le_locs, flags['le'])
+
+    if flags['ob']:
         std_input[1] = initial_val
-        std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE)
+        std_data_io.std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, flags['le'])
     
-    if flag_ps:
+    if flags['ps']:
         pass
 
-    if flag_lm:
-        pass
+    if flags['lm']:
+        std_data_io.std_data_output_after(MAIN_PARAMETER, LM_DYNAMIC, std_input, lm_name, lm_locs, flags['le'])
 
     return 

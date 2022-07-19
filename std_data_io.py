@@ -3,7 +3,10 @@
     std_data_io.py
 
 ========================================="""
-
+import os
+import shutil
+from copy import deepcopy
+import sys
 
 
 def get_delta_para(MAIN_DYNAMIC, std_input, tensor_direct = 0):
@@ -25,9 +28,6 @@ def get_delta_para(MAIN_DYNAMIC, std_input, tensor_direct = 0):
 
 
 def std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input):
-    import os
-    import shutil
-
     if not os.path.exists(MAIN_PARAMETER.default_data_folder):
         os.mkdir(MAIN_PARAMETER.default_data_folder)
     
@@ -61,7 +61,7 @@ def std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input):
 
     elif MAIN_DYNAMIC.data_type == "LE":
         tmp_name = MAIN_DYNAMIC.system_name + "_" 
-        tmp_name = "LE" + "_" 
+        tmp_name += "LE" + "_" 
         tmp_name += MAIN_DYNAMIC.para_name[MAIN_DYNAMIC.para_change_loc] + "_"
         tmp_name += str(MAIN_DYNAMIC.system_para_min[MAIN_DYNAMIC.para_change_loc]) + "_"
         tmp_name += str(MAIN_DYNAMIC.system_para_max[MAIN_DYNAMIC.para_change_loc])
@@ -70,6 +70,7 @@ def std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input):
 
     elif MAIN_DYNAMIC.data_type == "LSTD":
         tmp_name = MAIN_DYNAMIC.system_name + "_" 
+        tmp_name += "LSTD" + "_" 
         tmp_name += MAIN_DYNAMIC.para_name[MAIN_DYNAMIC.para_change_loc] + "_"
         tmp_name += str(MAIN_DYNAMIC.system_para_min[MAIN_DYNAMIC.para_change_loc]) + "_"
         tmp_name += str(MAIN_DYNAMIC.system_para_max[MAIN_DYNAMIC.para_change_loc])
@@ -90,7 +91,6 @@ def std_data_output_init(MAIN_PARAMETER, MAIN_DYNAMIC, std_input):
 
     
 def std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, tensor_direct = 0):
-    import os
     if MAIN_DYNAMIC.data_type == "STD":
         for i in range(0, len(file_names)):
             string = str(float(std_input[0])) + " "
@@ -133,10 +133,27 @@ def std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, fi
     return 
 
 
+
+def lm_data_output_main(MAIN_PARAMETER, LM_DYNAMIC, std_input, lm_locs):
+    string = ""
+    changed_tensor = get_delta_para(LM_DYNAMIC, std_input, 0)
+    for i in range(0, len(std_input[9][2])):
+        if std_input[9][2][i] > 0 and std_input[9][3][i] > 0:
+            string += str(float(changed_tensor[i])) + " "
+            string += str(float(std_input[9][0][i]))
+            string += "\n"
+    if not os.path.exists(lm_locs[0][1]):
+        file = open(lm_locs[0][1], "w")
+    else:
+        file = open(lm_locs[0][1], "a")
+    file.write(string)
+    file.close()
+    return 
+
+
+
     
 def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs, LE):
-    import os
-    from copy import deepcopy
     NEW_DYNAMIC = deepcopy(MAIN_DYNAMIC)
 
     if NEW_DYNAMIC.data_type == "STD":
@@ -185,9 +202,6 @@ def std_data_input_json(MAIN_PARAMETER, json_file_loc):
 
 
 def std_data_input_data(MAIN_DYNAMIC, json_loc, std_input):
-    import os
-    import sys
-
     kase = len(json_loc)
     for kase in range(len(json_loc) - 1, -1, -1):
         if json_loc[kase] == "\\" or json_loc[kase] == "/":

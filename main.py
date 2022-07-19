@@ -56,7 +56,7 @@ def main():
         operations = flag_check.flag_check_after(MAIN_PARAMETER, MAIN_DYNAMIC, operations, argv_loc)
         image_generation.image_generation(MAIN_PARAMETER, MAIN_DYNAMIC, operations)
         
-    if operation[0] == "3":
+    if operations[0] == "3":
         tools.main(MAIN_PARAMETER, operations)
 
     return 

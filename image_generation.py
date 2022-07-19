@@ -11,8 +11,6 @@ import initialization
 
 from figures import bifucations_diagram
 from figures import lyapunov_exponent
-from figures import d2_img
-from figures import d3_img
 
 import std_data_io
 

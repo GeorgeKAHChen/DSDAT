@@ -272,11 +272,12 @@ class system_parameter():
 
 
     def group_gen(self, MAIN_PARAMETER):
-        std_input = [0 for n in range(10)]
+        std_input = [0 for n in range(12)]
 
         std_input[1], std_input[2], std_input[3] = self.gen_data_group(MAIN_PARAMETER)
         std_input[4], std_input[5] = self.LE_initialization(MAIN_PARAMETER)
         std_input[8] = []
+        std_input[9] = [0, 0, 0, 0]
         return std_input
 
 

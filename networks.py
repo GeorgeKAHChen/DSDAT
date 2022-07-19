@@ -19,6 +19,7 @@ from layers import jacobian
 from layers import lya_expo
 from layers import matrix_times
 from layers import lya_spec
+from layers import calc_pm
 
 
 
@@ -94,15 +95,15 @@ class LE_n(nn.Module):
         std_input[5] = self.lya_spec(std_input)
 
 
-class section(nn.Module):
-    def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC):
-        super(section, self).__init__()
-        self.section_pm = MAIN_DYNAMIC.section()
-        self.last_x = 0
+
+class local_max(nn.Module):
+    def __init__(self, MAIN_PARAMETER, MAIN_DYNAMIC, variable):
+        super(local_max, self).__init__()
+        self.calc_pm = calc_pm.calc_pm(variable, MAIN_PARAMETER.device)
 
     def forward(self, std_input):
-        return 
-
+        std_input[9] = self.calc_pm(std_input)
+        
 
 
 
