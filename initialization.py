@@ -156,7 +156,7 @@ class system_parameter():
         new_json = str(json.dumps(new_json)+"\n")
 
         File = open(json_file_name, "w")
-        File.write(str(new_json))
+        File.write(str(new_json) + "\n")
         File.close()
 
         return
@@ -215,7 +215,7 @@ class system_parameter():
                         data_group[2].append(deepcopy(dyn_rand_para))
                     dyn_para[tmp_loc] = self.system_para_max[self.para_change_loc]
                     
-                elif para_change_loc - self.dim - self.para - self.rand_para < 0:
+                elif self.para_change_loc - self.dim - self.para - self.rand_para < 0:
                     tmp_loc = para_change_loc - self.dim - self.para
                     while 1:
                         dyn_rand_para[tmp_loc] += delta_para

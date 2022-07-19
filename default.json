@@ -2,7 +2,7 @@
     "dyn": "model.Lorenz",
 
     "t_max":  10000, 
-    "delta_t": 1e-3, 
+    "delta_t": 1e-2, 
     "delta_t_ob": -1,
     "t_ob": 9900,
     "t_le": 9000,
@@ -18,7 +18,7 @@
     "default_data_folder": "local_output",
     "read_folder": "local_output/Lorenz",
     "image_data_file": "",
-    "bfpara":[1000, 0, 1],
+    "bfpara":[100, 0, 50],
     "save_image_local": 1,
     "device": "cpu"
 

@@ -113,7 +113,6 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
         LM_DYNAMIC.data_type = "LSTD"
         lm_name, lm_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, LM_DYNAMIC, std_input)
         model_lm = networks.local_max(MAIN_PARAMETER, MAIN_DYNAMIC, flags['lm_para']).to(MAIN_PARAMETER.device)
-        
 
     # Main computation
     start = timeit.default_timer()
@@ -159,6 +158,8 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
         pass
 
     if flags['lm']:
-        std_data_io.std_data_output_after(MAIN_PARAMETER, LM_DYNAMIC, std_input, lm_name, lm_locs, flags['le'])
+        LM_DYNAMIC.dim = 1
+        LM_DYNAMIC.axis_name = [LM_DYNAMIC.para_name[LM_DYNAMIC.para_change_loc], LM_DYNAMIC.para_name[flags['lm_para']-1] + " local max map"]
+        std_data_io.lm_data_output_after(LM_DYNAMIC, lm_name, lm_locs)
 
     return 

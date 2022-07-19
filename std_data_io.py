@@ -191,6 +191,13 @@ def std_data_output_after(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, f
 
 
 
+def lm_data_output_after(MAIN_DYNAMIC, file_names, file_locs):
+    NEW_DYNAMIC = deepcopy(MAIN_DYNAMIC)
+    NEW_DYNAMIC.data_file_name = file_names[0] + ".data"
+    NEW_DYNAMIC.save_as_json(file_locs[0][0])
+    return 
+
+
 def std_data_input_json(MAIN_PARAMETER, json_file_loc):
     import initialization
     MAIN_DYNAMIC = initialization.system_parameter()

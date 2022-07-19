@@ -40,11 +40,11 @@ def check_flag():
 
 
 
-def image_generation(MAIN_PARAMETER):
+def image_generation(MAIN_PARAMETER, MAIN_DYNAMIC, operations):
     # read files 
     std_input = MAIN_DYNAMIC.group_gen(MAIN_PARAMETER)
     std_input[1] = [[] for n in range(len(MAIN_DYNAMIC.axis_name))]
-    std_data_io.std_data_input_data(MAIN_DYNAMIC, file_name, std_input)
+    std_data_io.std_data_input_data(MAIN_DYNAMIC, operations[1], std_input)
 
     # add flag - LE
     if MAIN_DYNAMIC.data_type == "LE":
@@ -66,26 +66,11 @@ def image_generation(MAIN_PARAMETER):
 
     # add flag - LSTD
     else:
-        if MAIN_DYNAMIC.dim > 1:
-            while 1:
-                if len(sys.argv) <= 3:
-                    flags = input("Please input the dimension you want to plot for bifucation diagram:  ")
-                else:
-                    flags = sys.argv[3]
+        bifucations_diagram.bifucations_diagram(MAIN_PARAMETER, 
+                                                MAIN_DYNAMIC,
+                                                std_input[1][0], 
+                                                std_input[1][operations[2]], 
+                                                MAIN_DYNAMIC.axis_name[operations[2]])
 
-                try:
-                    flags = int(flags)
-                except:
-                    print("Input flag error, it should be a int value")
-                    if len(sys.argv) <= 3:
-                        continue
-                    else:
-                        sys.exit()
-                bifucations_diagram.bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC,
-                                                        std_input[1][0], std_input[1][flags], MAIN_DYNAMIC.axis_name[flags])
-                break
-        else:
-            bifucations_diagram.bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC,
-                                                    std_input[1][0], std_input[1][1], MAIN_DYNAMIC.axis_name[1])
     return 
 

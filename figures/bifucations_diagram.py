@@ -46,6 +46,25 @@ def bifucations_diagram(MAIN_PARAMETER, MAIN_DYNAMIC, para, vals, vals_name):
         os.mkdir(save_path)
 
 
+    print()
+    print()
+    print("/*----------------------------------------------*/")
+    print("Model Information")
+    print("system_name: " + str(MAIN_DYNAMIC.system_name))
+    print("system_type: " + str(MAIN_DYNAMIC.system_type))
+    print("/*----------------------------------------------*/")
+    print("dim, para, rand, rand_para = " + str(MAIN_DYNAMIC.dim) + ", " + str(MAIN_DYNAMIC.para) + ", " + str(MAIN_DYNAMIC.rand) + ", " + str(MAIN_DYNAMIC.rand_para))
+    print("system_para_min: " + str(MAIN_DYNAMIC.system_para_min))
+    print("system_para_max: " + str(MAIN_DYNAMIC.system_para_max))
+    print("system_group: " + str(MAIN_DYNAMIC.system_group))
+    print("/*----------------------------------------------*/")
+    print("Figure Information")
+    print("Variable info: min = " + str(minn_y) + ", max = " + str(maxx_y) + ", size = " + str(group_y))
+    print("Parameter info: min = " + str(minn_para) + ", max = " + str(maxx_para) + ", size = " + str(group_para))
+    print("/*----------------------------------------------*/")
+    print()
+    print()
+
 
     # Image generator and save
     img = [[255 for n in range(group_para+1)] for n in range(group_y+1)]
