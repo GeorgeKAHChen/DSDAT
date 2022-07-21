@@ -146,7 +146,7 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
 
 
     if flags['le']:
-        MAIN_DYNAMIC.data_type = "LE"        
+        LE_DYNAMIC.data_type = "LE"        
         std_data_io.std_data_output_main(MAIN_PARAMETER, LE_DYNAMIC, std_input, le_names, le_locs)
         std_data_io.std_data_output_after(MAIN_PARAMETER, LE_DYNAMIC, std_input, le_names, le_locs, flags['le'])
 

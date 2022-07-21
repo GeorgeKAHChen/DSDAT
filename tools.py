@@ -159,7 +159,8 @@ def local_maxinum(MAIN_PARAMETER):
 
 
 def main(MAIN_PARAMETER, operations):
-    if operations[1] == "-bf":
+    print(operations)
+    if operations[1] == "-bd":
         bifucation_add_axis(MAIN_PARAMETER)
 
     if operations[1] == "-lm":

@@ -87,7 +87,7 @@ class LE_n(nn.Module):
         super(LE_n, self).__init__()
         self.jacobian = jacobian.jacobian(MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.Jf, MAIN_DYNAMIC.dim, MAIN_PARAMETER.device)
         self.matrix_times = matrix_times.matrix_times(MAIN_DYNAMIC.dim, MAIN_PARAMETER.device)
-        self.lya_spec = lya_spec.lya_spec(MAIN_DYNAMIC.dim, MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.t_mark, MAIN_PARAMETER.device)
+        self.lya_spec = lya_spec.lya_spec(MAIN_DYNAMIC.dim, MAIN_DYNAMIC.delta_t, MAIN_DYNAMIC.t_le, MAIN_PARAMETER.device)
 
     def forward(self, std_input):
         std_input[7] = self.jacobian(std_input)
