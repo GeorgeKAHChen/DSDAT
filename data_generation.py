@@ -111,18 +111,22 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
     if flags['lm']:
         LM_DYNAMIC = deepcopy(MAIN_DYNAMIC)
         LM_DYNAMIC.data_type = "LSTD"
+        LM_DYNAMIC.system_name = LM_DYNAMIC.system_name + "_" + LM_DYNAMIC.axis_name[flags['lm_para']]
+        LM_DYNAMIC.memo = str(LM_DYNAMIC.memo) + '/' +LM_DYNAMIC.axis_name[flags['lm_para']] + " local max map"
         lm_name, lm_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, LM_DYNAMIC, std_input)
         model_lm = networks.local_max(MAIN_PARAMETER, MAIN_DYNAMIC, flags['lm_para']).to(MAIN_PARAMETER.device)
 
     # Main computation
     start = timeit.default_timer()
-    t_save = 0
+    t_ob_ite = 0
+    t_le_ite = 0
     kase = 0
     while 1:
         if std_input[0] >= MAIN_DYNAMIC.t_max:
             break
         std_input[0] += MAIN_DYNAMIC.delta_t
-        t_save += MAIN_DYNAMIC.delta_t
+        t_ob_ite += MAIN_DYNAMIC.delta_t
+        t_le_ite += MAIN_DYNAMIC.delta_t
         kase += 1
         if kase >= MAIN_PARAMETER.print_t:
             print(kase, std_input[0], MAIN_DYNAMIC.t_max)
@@ -130,10 +134,11 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
 
         # main computation
         model_std(std_input)
-        if flags['le'] and std_input[0] >= MAIN_DYNAMIC.t_le:
+        if flags['le'] and std_input[0] >= MAIN_DYNAMIC.t_le and t_le_ite >= MAIN_DYNAMIC.delta_t_le:
+            t_le_ite = 0
             model_le(std_input)
-        if flags['ob'] and std_input[0] >= MAIN_DYNAMIC.t_ob and t_save >= MAIN_DYNAMIC.delta_t_ob:
-            t_save = 0
+        if flags['ob'] and std_input[0] >= MAIN_DYNAMIC.t_ob and t_ob_ite >= MAIN_DYNAMIC.delta_t_ob:
+            t_ob_ite = 0
             std_data_io.std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, file_locs)
         if flags['ps'] and std_input[0] >= MAIN_DYNAMIC.t_ps:
             pass

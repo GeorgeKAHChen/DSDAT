@@ -1,13 +1,14 @@
 {
     "dyn": "model.Lorenz",
 
-    "t_max":  10000, 
-    "delta_t": 1e-2, 
+    "t_max":  50000, 
+    "delta_t": 1e-3, 
     "delta_t_ob": -1,
-    "t_ob": 9900,
-    "t_le": 9000,
-    "t_lm": 9900,
-    "t_ps": 9900,
+    "delta_t_le": 1e-1,
+    "t_ob": 49900,
+    "t_le": 49990,
+    "t_lm": 49900,
+    "t_ps": 49900,
     
     "print_t": 1000000,
     //For map 
@@ -18,7 +19,7 @@
     "default_data_folder": "local_output",
     "read_folder": "local_output/Lorenz",
     "image_data_file": "",
-    "bfpara":[100, 0, 50],
+    "bfpara":[2000, -70, 130],
     "save_image_local": 1,
     "device": "cpu"
 

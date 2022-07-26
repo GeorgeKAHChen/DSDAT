@@ -62,7 +62,7 @@ class system_parameter():
     def __init__(self):
         self.input_keys = ["data_type", "data_file_name"]
             # depend on computation
-        self.time_keys = ["t_max", "delta_t", "delta_t_ob", "t_le", "t_ob", "t_ps", "t_lm"]
+        self.time_keys = ["t_max", "delta_t", "delta_t_ob", "delta_t_le", "t_le", "t_ob", "t_ps", "t_lm"]
             # read from default.json
         self.system_keys = ["system_type", "system_name", "dim", "para", "rand", "rand_para", "para_change_loc", "system_para", "system_para_min", "system_para_max", "system_group", "axis_name"]
             # read from model.py
