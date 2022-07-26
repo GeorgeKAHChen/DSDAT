@@ -19,6 +19,10 @@ class lya_spec(nn.Module):
         eye = std_input[4]
         LE = std_input[5]
         mat_result = deepcopy(eye)
+        """
+        print("mat_result")
+        print(mat_result)
+        """
         """gram_schmidt"""
         for kase in range(0, self.dim):
             for i in range(0, kase):
@@ -29,17 +33,48 @@ class lya_spec(nn.Module):
                     inner_ab += eye[i+j*self.dim] * mat_result[kase+j*self.dim]
                 for j in range(0, self.dim):
                     eye[kase + j*self.dim] -= (inner_ab/inner_beta) * eye[i+j*self.dim]
+            """
+            if kase + 1 != self.dim:
+                for i in range(0, self.dim):
+                    eye[kase + i*self.dim] = -eye[kase + i*self.dim]
+            """
+        """
+        print("eye not norm")
+        print(eye)    
+        """    
         """Normalization"""
+
+        para_norm = [0 for n in range(self.dim)]
+        for i in range(0, self.dim):
+            for j in range(0, self.dim):
+                para_norm[i] += torch.pow(eye[i + self.dim*j], 2)
+            para_norm[i] = torch.sqrt(para_norm[i])          
+            for j in range(0, self.dim):
+                eye[i + self.dim*j] /= para_norm[i]
+        
+        """ 
+        print("norm")
+        print(para_norm)
+        print("eye")
+        print(eye)
+        print("mat_result")
+        print(mat_result)
+        """
         new_spec = [0 for n in range(self.dim)]
         for i in range(0, self.dim):
             for j in range(0, self.dim):
-                new_spec[i] += torch.pow(eye[i + self.dim*j], 2)
-            new_spec[i] = torch.sqrt(new_spec[i])          
-            for j in range(0, self.dim):
-                eye[i + self.dim*j] /= new_spec[i]
+                new_spec[i] += eye[i + j * self.dim] * mat_result[i + j * self.dim]
+        """
+        print("new_spec")
+        print(new_spec)
+        
+        """
         time_minus = curr_t - self.t_mark
         for i in range(0, len(LE)):
-            LE[i] = (time_minus / (time_minus + self.delta_t)) * LE[i] + (self.delta_t / (time_minus + self.delta_t)) * torch.log(new_spec[i])
+            LE[i] = (time_minus * LE[i] + torch.log(new_spec[i])) / (time_minus + self.delta_t)
+            #LE[i] = (time_minus * LE[i] + self.delta_t * torch.log(new_spec[i])) / (time_minus + self.delta_t)
+            # spectrum[i] = (spectrum[i] * t_after + log(new_spec[i])) / (t_after + delta_t);
+        #input()
         return LE
 
     def extra_repr(self):

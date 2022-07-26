@@ -1,16 +1,16 @@
 {
     "dyn": "model.Lorenz",
 
-    "t_max":  50000, 
-    "delta_t": 1e-3, 
+    "t_max":  10000, 
+    "delta_t": 1e-2, 
     "delta_t_ob": -1,
-    "delta_t_le": 1e-1,
-    "t_ob": 49900,
-    "t_le": 49990,
-    "t_lm": 49900,
-    "t_ps": 49900,
+    "delta_t_le": 1e-2,
+    "t_ob": 9900,
+    "t_le": 9900,
+    "t_lm": 9900,
+    "t_ps": 9900,
     
-    "print_t": 1000000,
+    "print_t": 100000,
     //For map 
     //"t_max":  10000000, 
     //"t_mark": 9000000, 
