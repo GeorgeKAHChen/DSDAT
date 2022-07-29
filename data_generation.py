@@ -129,8 +129,10 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
         t_le_ite += MAIN_DYNAMIC.delta_t
         kase += 1
         if kase >= MAIN_PARAMETER.print_t:
-            print(kase, std_input[0], MAIN_DYNAMIC.t_max)
+            print(kase, std_input[0], MAIN_DYNAMIC.t_max, end = ":   ")
+            print('Time: ', timeit.default_timer() - start)
             kase = 0
+            start = timeit.default_timer()
 
         # main computation
         model_std(std_input)
@@ -146,8 +148,8 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
             model_lm(std_input)
             std_data_io.lm_data_output_main(MAIN_PARAMETER, LM_DYNAMIC, std_input, lm_locs)
 
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
+    print('Time: ', timeit.default_timer() - start)
+    
 
 
     if flags['le']:
