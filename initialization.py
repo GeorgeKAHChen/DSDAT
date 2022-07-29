@@ -17,7 +17,6 @@ STD_JSON = {
     "t_ob": 0,
     "t_ps": 0,
     "t_lm": 0,
-    
 
     "dim": 0,
     "para": 0,
@@ -277,7 +276,7 @@ class system_parameter():
         std_input[1], std_input[2], std_input[3] = self.gen_data_group(MAIN_PARAMETER)
         std_input[4], std_input[5] = self.LE_initialization(MAIN_PARAMETER)
         std_input[8] = []
-        std_input[9] = [0, 0, 0, 0]
+        std_input[9] = [0 for n in range(10)]
         return std_input
 
 

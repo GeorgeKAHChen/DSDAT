@@ -48,6 +48,8 @@ def image_generation(MAIN_PARAMETER, MAIN_DYNAMIC, operations):
 
     # add flag - LE
     if MAIN_DYNAMIC.data_type == "LE":
+        lyapunov_exponent.lyapunov_exponent(MAIN_PARAMETER, MAIN_DYNAMIC, std_input[1])
+        """
         if MAIN_DYNAMIC.dim == 1:
             lyapunov_exponent.lyapunov_exponent(MAIN_PARAMETER, MAIN_DYNAMIC, std_input[1], [1])
         else:
@@ -63,7 +65,7 @@ def image_generation(MAIN_PARAMETER, MAIN_DYNAMIC, operations):
                 else:
                     lyapunov_exponent.lyapunov_exponent(MAIN_PARAMETER, MAIN_DYNAMIC, std_input[1], flags_to_arr)
                 break
-
+        """
     # add flag - LSTD
     else:
         bifucations_diagram.bifucations_diagram(MAIN_PARAMETER, 

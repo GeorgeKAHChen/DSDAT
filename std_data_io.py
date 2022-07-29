@@ -136,6 +136,10 @@ def std_data_output_main(MAIN_PARAMETER, MAIN_DYNAMIC, std_input, file_names, fi
 
 def lm_data_output_main(MAIN_PARAMETER, LM_DYNAMIC, std_input, lm_locs):
     import torch
+    """
+    if std_input[9][4] == 0:
+        return 
+    """
     string = ""
     changed_tensor = get_delta_para(LM_DYNAMIC, std_input, 0)
     # torch.where GOD!!!!!!!!!!
@@ -147,7 +151,9 @@ def lm_data_output_main(MAIN_PARAMETER, LM_DYNAMIC, std_input, lm_locs):
     for kase in range(0, len(nonzero)):
         i = nonzero[kase]
         string += str(float(changed_tensor[i])) + " "
-        string += str(float(std_input[9][0][i]))
+        #string += str(float(std_input[9][0][i])) + " "
+        for j in range(0, LM_DYNAMIC.dim):
+            string += str(float(std_input[9][4][j][i])) + " "
         string += "\n"
     
     if len(string) == 0:

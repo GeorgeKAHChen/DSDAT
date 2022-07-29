@@ -17,7 +17,7 @@ class calc_pm(nn.Module):
         last_x = std_input[9][1]
         last_last_x = std_input[9][0]
         
-        return [last_x, curr_x, (last_x - curr_x) * (last_x - last_last_x), (last_x - curr_x) + (last_x - last_last_x)]
+        return [last_x, curr_x, (last_x - curr_x) * (last_x - last_last_x), (last_x - curr_x) + (last_x - last_last_x), deepcopy(std_input[9][5]), deepcopy(std_input[1])]
 
     def extra_repr(self):
         #Output the io size for visible

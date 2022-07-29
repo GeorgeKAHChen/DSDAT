@@ -111,8 +111,8 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
     if flags['lm']:
         LM_DYNAMIC = deepcopy(MAIN_DYNAMIC)
         LM_DYNAMIC.data_type = "LSTD"
-        LM_DYNAMIC.system_name = LM_DYNAMIC.system_name + "_" + LM_DYNAMIC.axis_name[flags['lm_para']]
-        LM_DYNAMIC.memo = str(LM_DYNAMIC.memo) + '/' +LM_DYNAMIC.axis_name[flags['lm_para']] + " local max map"
+        LM_DYNAMIC.system_name = LM_DYNAMIC.system_name + "_" + LM_DYNAMIC.axis_name[flags['lm_para']-1]
+        LM_DYNAMIC.memo = str(LM_DYNAMIC.memo) + '/' +LM_DYNAMIC.axis_name[flags['lm_para']-1] + " local max map"
         lm_name, lm_locs = std_data_io.std_data_output_init(MAIN_PARAMETER, LM_DYNAMIC, std_input)
         model_lm = networks.local_max(MAIN_PARAMETER, MAIN_DYNAMIC, flags['lm_para']).to(MAIN_PARAMETER.device)
 
@@ -163,8 +163,8 @@ def data_generation(MAIN_PARAMETER, MAIN_DYNAMIC, input_flags):
         pass
 
     if flags['lm']:
-        LM_DYNAMIC.dim = 1
-        LM_DYNAMIC.axis_name = [LM_DYNAMIC.para_name[LM_DYNAMIC.para_change_loc], LM_DYNAMIC.para_name[flags['lm_para']-1] + " local max map"]
+        #LM_DYNAMIC.dim = 1
+        LM_DYNAMIC.axis_name = [LM_DYNAMIC.para_name[LM_DYNAMIC.para_change_loc]] + LM_DYNAMIC.para_name[0:LM_DYNAMIC.dim]
         std_data_io.lm_data_output_after(LM_DYNAMIC, lm_name, lm_locs)
 
     return 

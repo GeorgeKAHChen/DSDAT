@@ -160,7 +160,7 @@ inputs[5] = array[TensorDouble] #LE;
 inputs[6] = array[TensorDouble] #random_value;
 inputs[7] = array[TensorDouble] #jacobian;
 inputs[8] = array[double]       #LE_table / Value table;
-inputs[9] = array[TensorDouble] #last_last_x, last_x, pm
+inputs[9] = array[TensorDouble] #last_last_x, last_x, multi, sum, [last_x], [curr_x]
 ```
 
 
