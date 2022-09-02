@@ -166,3 +166,6 @@ def main(MAIN_PARAMETER, operations):
     if operations[1] == "-lm":
         local_maxinum(MAIN_PARAMETER)
 
+    if operations[1] == "-pm":
+        poincare_map(MAIN_PARAMETER)
+
